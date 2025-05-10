@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interface Laranja</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      border-left: 10px solid orange;
+      border-right: 10px solid orange;
+    }
+
+    .top-laranja {
+      height: 10px;
+      background-color: orange;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+    }
+
+    .caixa-texto {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 20px;
+      border-top: 10px solid orange;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .caixa-texto a {
+      text-decoration: none;
+      color: #333;
+      margin: 5px;
+    }
+
+    .imagem-logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 128px;
+      height: 128px;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .esquerda {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .direita {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="imagem-logo" style="background-image: url('NeuratechLOGO.jpg');"></div>
+  <div class="top-laranja"></div>
+
+  <div class="container">
+    <div class="caixa-texto">
+      <div class="esquerda">
+        <a href="/produtos-pessoais">produtos pessoais</a>
+        <a href="/produtos">produtos</a>
+      </div>
+      <div class="direita">
+        <a href="/produtos-vendidos">produtos vendidos</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
