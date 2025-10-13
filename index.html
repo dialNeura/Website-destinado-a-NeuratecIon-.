@@ -1,3 +1,11 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from datetime import datetime, timedelta
+import io
+import base64
+
+# HTML inicial fornecido
+html_inicial = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -88,6 +96,26 @@
         align-items: flex-start;
       }
     }
+
+    .graficos {
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 100px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .grafico {
+      width: 48%;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grafico {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -107,8 +135,85 @@
         </div>
       </div>
     </div>
+    <!-- Insira os gráficos aqui -->
   </div>
 
 </body>
 </html>
+"""
 
+# Função para gerar dados simulados de uma criptomoeda ou ação
+def gerar_dados_simulados(num_dias=30):
+    # Data atual (simulada como 13/10/2025)
+    data_atual = datetime(2025, 10, 13)
+    datas = [data_atual - timedelta(days=i) for i in range(num_dias)][::-1]
+    
+    # Preços simulados (random walk)
+    precos = [100]  # Preço inicial
+    for _ in range(1, num_dias):
+        variacao = np.random.uniform(-0.05, 0.05)  # Variação de -5% a +5%
+        novo_preco = precos[-1] * (1 + variacao)
+        precos.append(novo_preco)
+    
+    # Volumes simulados
+    volumes = np.random.randint(1000, 10000, size=num_dias)
+    
+    return datas, precos, volumes
+
+# Gerar dados
+datas, precos, volumes = gerar_dados_simulados()
+
+# Criar gráfico 1: Preço ao longo do tempo (linha)
+fig1, ax1 = plt.subplots(figsize=(6, 4))
+ax1.plot(datas, precos, marker='o', linestyle='-', color='b')
+ax1.set_title('Preço da Criptomoeda/Ação ao Longo dos Dias')
+ax1.set_xlabel('Data')
+ax1.set_ylabel('Preço')
+ax1.grid(True)
+plt.xticks(rotation=45)
+plt.tight_layout()
+
+# Converter para base64
+buffer1 = io.BytesIO()
+fig1.savefig(buffer1, format='png')
+buffer1.seek(0)
+img_base64_1 = base64.b64encode(buffer1.read()).decode('utf-8')
+plt.close(fig1)
+
+# Criar gráfico 2: Volume ao longo do tempo (barra)
+fig2, ax2 = plt.subplots(figsize=(6, 4))
+ax2.bar(datas, volumes, color='g')
+ax2.set_title('Volume de Transações ao Longo dos Dias')
+ax2.set_xlabel('Data')
+ax2.set_ylabel('Volume')
+ax2.grid(True)
+plt.xticks(rotation=45)
+plt.tight_layout()
+
+# Converter para base64
+buffer2 = io.BytesIO()
+fig2.savefig(buffer2, format='png')
+buffer2.seek(0)
+img_base64_2 = base64.b64encode(buffer2.read()).decode('utf-8')
+plt.close(fig2)
+
+# Inserir os gráficos no HTML
+graficos_html = f"""
+    <div class="graficos">
+      <div class="grafico">
+        <img src="data:image/png;base64,{img_base64_1}" alt="Gráfico de Preço">
+      </div>
+      <div class="grafico">
+        <img src="data:image/png;base64,{img_base64_2}" alt="Gráfico de Volume">
+      </div>
+    </div>
+"""
+
+# Substituir o placeholder no HTML
+html_final = html_inicial.replace("<!-- Insira os gráficos aqui -->", graficos_html)
+
+# Salvar o HTML gerado em um arquivo
+with open("website_com_graficos.html", "w", encoding="utf-8") as file:
+    file.write(html_final)
+
+print("HTML com gráficos gerado e salvo em 'website_com_graficos.html'.")
