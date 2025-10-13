@@ -1,17 +1,10 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from datetime import datetime, timedelta
-import io
-import base64
-
-# HTML inicial fornecido
-html_inicial = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Website destinado a Neuratec</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -135,85 +128,97 @@ html_inicial = """
         </div>
       </div>
     </div>
-    <!-- Insira os gráficos aqui -->
+    <div class="graficos">
+      <div class="grafico">
+        <canvas id="precoChart"></canvas>
+      </div>
+      <div class="grafico">
+        <canvas id="volumeChart"></canvas>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // Dados simulados
+    const datas = ['2025-09-14', '2025-09-15', '2025-09-16', '2025-09-17', '2025-09-18', '2025-09-19', '2025-09-20', '2025-09-21', '2025-09-22', '2025-09-23', '2025-09-24', '2025-09-25', '2025-09-26', '2025-09-27', '2025-09-28', '2025-09-29', '2025-09-30', '2025-10-01', '2025-10-02', '2025-10-03', '2025-10-04', '2025-10-05', '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09', '2025-10-10', '2025-10-11', '2025-10-12', '2025-10-13'];
+    const precos = [100, 98.01, 101.16, 99.34, 99.09, 103.25, 103.63, 104.58, 104.03, 102.95, 99.07, 95.48, 96.35, 92.09, 87.98, 85.35, 88.62, 88.72, 85.74, 88.67, 88.09, 91.99, 95.17, 91.66, 88.07, 90.03, 90.74, 87.24, 86.47, 87.44];
+    const volumes = [3742, 4389, 8040, 5353, 5035, 4186, 8793, 3675, 4620, 3870, 1424, 3137, 8312, 2418, 9374, 7719, 4339, 6308, 1834, 6115, 1165, 6281, 6317, 3290, 4099, 9238, 5702, 3737, 2737, 7208];
+
+    // Gráfico de Preço
+    const ctxPreco = document.getElementById('precoChart').getContext('2d');
+    const precoChart = new Chart(ctxPreco, {
+      type: 'line',
+      data: {
+        labels: datas,
+        datasets: [{
+          label: 'Preço',
+          data: precos,
+          borderColor: 'blue',
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Preço da Criptomoeda/Ação ao Longo dos Dias'
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Data'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Preço'
+            }
+          }
+        }
+      }
+    });
+
+    // Gráfico de Volume
+    const ctxVolume = document.getElementById('volumeChart').getContext('2d');
+    const volumeChart = new Chart(ctxVolume, {
+      type: 'bar',
+      data: {
+        labels: datas,
+        datasets: [{
+          label: 'Volume',
+          data: volumes,
+          backgroundColor: 'green'
+        }]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Volume de Transações ao Longo dos Dias'
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Data'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Volume'
+            }
+          }
+        }
+      }
+    });
+  </script>
 
 </body>
 </html>
-"""
-
-# Função para gerar dados simulados de uma criptomoeda ou ação
-def gerar_dados_simulados(num_dias=30):
-    # Data atual (simulada como 13/10/2025)
-    data_atual = datetime(2025, 10, 13)
-    datas = [data_atual - timedelta(days=i) for i in range(num_dias)][::-1]
-    
-    # Preços simulados (random walk)
-    precos = [100]  # Preço inicial
-    for _ in range(1, num_dias):
-        variacao = np.random.uniform(-0.05, 0.05)  # Variação de -5% a +5%
-        novo_preco = precos[-1] * (1 + variacao)
-        precos.append(novo_preco)
-    
-    # Volumes simulados
-    volumes = np.random.randint(1000, 10000, size=num_dias)
-    
-    return datas, precos, volumes
-
-# Gerar dados
-datas, precos, volumes = gerar_dados_simulados()
-
-# Criar gráfico 1: Preço ao longo do tempo (linha)
-fig1, ax1 = plt.subplots(figsize=(6, 4))
-ax1.plot(datas, precos, marker='o', linestyle='-', color='b')
-ax1.set_title('Preço da Criptomoeda/Ação ao Longo dos Dias')
-ax1.set_xlabel('Data')
-ax1.set_ylabel('Preço')
-ax1.grid(True)
-plt.xticks(rotation=45)
-plt.tight_layout()
-
-# Converter para base64
-buffer1 = io.BytesIO()
-fig1.savefig(buffer1, format='png')
-buffer1.seek(0)
-img_base64_1 = base64.b64encode(buffer1.read()).decode('utf-8')
-plt.close(fig1)
-
-# Criar gráfico 2: Volume ao longo do tempo (barra)
-fig2, ax2 = plt.subplots(figsize=(6, 4))
-ax2.bar(datas, volumes, color='g')
-ax2.set_title('Volume de Transações ao Longo dos Dias')
-ax2.set_xlabel('Data')
-ax2.set_ylabel('Volume')
-ax2.grid(True)
-plt.xticks(rotation=45)
-plt.tight_layout()
-
-# Converter para base64
-buffer2 = io.BytesIO()
-fig2.savefig(buffer2, format='png')
-buffer2.seek(0)
-img_base64_2 = base64.b64encode(buffer2.read()).decode('utf-8')
-plt.close(fig2)
-
-# Inserir os gráficos no HTML
-graficos_html = f"""
-    <div class="graficos">
-      <div class="grafico">
-        <img src="data:image/png;base64,{img_base64_1}" alt="Gráfico de Preço">
-      </div>
-      <div class="grafico">
-        <img src="data:image/png;base64,{img_base64_2}" alt="Gráfico de Volume">
-      </div>
-    </div>
-"""
-
-# Substituir o placeholder no HTML
-html_final = html_inicial.replace("<!-- Insira os gráficos aqui -->", graficos_html)
-
-# Salvar o HTML gerado em um arquivo
-with open("website_com_graficos.html", "w", encoding="utf-8") as file:
-    file.write(html_final)
-
-print("HTML com gráficos gerado e salvo em 'website_com_graficos.html'.")
