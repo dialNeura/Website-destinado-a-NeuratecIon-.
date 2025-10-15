@@ -1,224 +1,92 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Website destinado a Neuratec</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      font-family: sans-serif;
-      border-left: 10px solid orange;
-      border-right: 10px solid orange;
-      box-sizing: border-box;
-    }
+.top-laranja {
+  height: 10px;
+  background-color: orange;
+}
 
-    .top-laranja {
-      height: 10px;
-      background-color: orange;
-    }
+.imagem-logo {
+  width: 128px;
+  height: 128px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url('NeuratechLOGO.jpg');
+  margin-right: 20px;
+}
 
-    .imagem-logo {
-      width: 128px;
-      height: 128px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-image: url('NeuratechLOGO.jpg');
-      margin-right: 20px;
-    }
+.container {
+  width: 100%;
+  height: calc(100% - 10px);
+  display: flex;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
-    .container {
-      width: 100%;
-      height: calc(100% - 10px);
-      display: flex;
-      align-items: flex-start;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+.caixa-texto {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  border-top: 10px solid orange;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
 
-    .caixa-texto {
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      padding: 20px;
-      border-top: 10px solid orange;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1000px;
-      flex-wrap: wrap;
-      box-sizing: border-box;
-    }
+.caixa-texto a {
+  text-decoration: none;
+  color: #333;
+  margin: 5px 10px;
+}
 
-    .caixa-texto a {
-      text-decoration: none;
-      color: #333;
-      margin: 5px 10px;
-    }
+.linha-links {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+}
 
-    .linha-links {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      flex-wrap: wrap;
-    }
+.linha-links .esquerda, .linha-links .direita {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-    .linha-links .esquerda, .linha-links .direita {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.linha-links .esquerda {
+  flex-grow: 1;
+}
 
-    .linha-links .esquerda {
-      flex-grow: 1;
-    }
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+  .linha-links {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 
-      .linha-links {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
+.graficos {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 100px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
 
-    .graficos {
-      width: 100%;
-      max-width: 1000px;
-      margin-top: 100px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
+.grafico {
+  width: 48%;
+  margin-bottom: 20px;
+}
 
-    .grafico {
-      width: 48%;
-      margin-bottom: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .grafico {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="top-laranja"></div>
-
-  <div class="container">
-    <div class="imagem-logo"></div>
-    <div class="caixa-texto">
-      <div class="linha-links">
-        <div class="esquerda">
-          <a href="/produtos-pessoais">produtos pessoais</a>
-          <a href="/produtos">produtos</a>
-        </div>
-        <div class="direita">
-          <a href="/produtos-vendidos">produtos vendidos</a>
-        </div>
-      </div>
-    </div>
-    <div class="graficos">
-      <div class="grafico">
-        <canvas id="precoChart"></canvas>
-      </div>
-      <div class="grafico">
-        <canvas id="volumeChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Dados simulados
-    const datas = ['2025-09-14', '2025-09-15', '2025-09-16', '2025-09-17', '2025-09-18', '2025-09-19', '2025-09-20', '2025-09-21', '2025-09-22', '2025-09-23', '2025-09-24', '2025-09-25', '2025-09-26', '2025-09-27', '2025-09-28', '2025-09-29', '2025-09-30', '2025-10-01', '2025-10-02', '2025-10-03', '2025-10-04', '2025-10-05', '2025-10-06', '2025-10-07', '2025-10-08', '2025-10-09', '2025-10-10', '2025-10-11', '2025-10-12', '2025-10-13'];
-    const precos = [100, 98.01, 101.16, 99.34, 99.09, 103.25, 103.63, 104.58, 104.03, 102.95, 99.07, 95.48, 96.35, 92.09, 87.98, 85.35, 88.62, 88.72, 85.74, 88.67, 88.09, 91.99, 95.17, 91.66, 88.07, 90.03, 90.74, 87.24, 86.47, 87.44];
-    const volumes = [3742, 4389, 8040, 5353, 5035, 4186, 8793, 3675, 4620, 3870, 1424, 3137, 8312, 2418, 9374, 7719, 4339, 6308, 1834, 6115, 1165, 6281, 6317, 3290, 4099, 9238, 5702, 3737, 2737, 7208];
-
-    // Gráfico de Preço
-    const ctxPreco = document.getElementById('precoChart').getContext('2d');
-    const precoChart = new Chart(ctxPreco, {
-      type: 'line',
-      data: {
-        labels: datas,
-        datasets: [{
-          label: 'Preço',
-          data: precos,
-          borderColor: 'blue',
-          fill: false
-        }]
-      },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Preço da Criptomoeda/Ação ao Longo dos Dias'
-        },
-        scales: {
-          x: {
-            display: true,
-            title: {
-              display: true,
-              text: 'Data'
-            }
-          },
-          y: {
-            display: true,
-            title: {
-              display: true,
-              text: 'Preço'
-            }
-          }
-        }
-      }
-    });
-
-    // Gráfico de Volume
-    const ctxVolume = document.getElementById('volumeChart').getContext('2d');
-    const volumeChart = new Chart(ctxVolume, {
-      type: 'bar',
-      data: {
-        labels: datas,
-        datasets: [{
-          label: 'Volume',
-          data: volumes,
-          backgroundColor: 'green'
-        }]
-      },
-      options: {
-        responsive: true,
-        title: {
-          display: true,
-          text: 'Volume de Transações ao Longo dos Dias'
-        },
-        scales: {
-          x: {
-            display: true,
-            title: {
-              display: true,
-              text: 'Data'
-            }
-          },
-          y: {
-            display: true,
-            title: {
-              display: true,
-              text: 'Volume'
-            }
-          }
-        }
-      }
-    });
-  </script>
-
-</body>
-</html>
+@media (max-width: 768px) {
+  .grafico {
+    width: 100%;
+  }
+}
