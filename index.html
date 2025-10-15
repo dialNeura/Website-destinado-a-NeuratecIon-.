@@ -1,92 +1,174 @@
-.top-laranja {
-  height: 10px;
-  background-color: orange;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website destinado a Neuratec</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: sans-serif;
+      border-left: 10px solid orange;
+      border-right: 10px solid orange;
+      box-sizing: border-box;
+    }
 
-.imagem-logo {
-  width: 128px;
-  height: 128px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url('NeuratechLOGO.jpg');
-  margin-right: 20px;
-}
+    .top-laranja {
+      height: 10px;
+      background-color: orange;
+    }
 
-.container {
-  width: 100%;
-  height: calc(100% - 10px);
-  display: flex;
-  align-items: flex-start;
-  padding: 20px;
-  box-sizing: border-box;
-}
+    .imagem-logo {
+      width: 128px;
+      height: 128px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-image: url('NeuratechLOGO.jpg');
+      margin-right: 20px;
+    }
 
-.caixa-texto {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  border-top: 10px solid orange;
-  font-family: sans-serif;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1000px;
-  flex-wrap: wrap;
-  box-sizing: border-box;
-}
+    .container {
+      width: 100%;
+      height: calc(100% - 10px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-.caixa-texto a {
-  text-decoration: none;
-  color: #333;
-  margin: 5px 10px;
-}
+    .caixa-texto {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 20px;
+      border-top: 10px solid orange;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1000px;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+    }
 
-.linha-links {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  flex-wrap: wrap;
-}
+    .caixa-texto a {
+      text-decoration: none;
+      color: #333;
+      margin: 5px 10px;
+    }
 
-.linha-links .esquerda, .linha-links .direita {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-}
+    .linha-links {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      flex-wrap: wrap;
+    }
 
-.linha-links .esquerda {
-  flex-grow: 1;
-}
+    .linha-links .esquerda, .linha-links .direita {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .linha-links .esquerda {
+      flex-grow: 1;
+    }
 
-  .linha-links {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
+    .graphs {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
 
-.graficos {
-  width: 100%;
-  max-width: 1000px;
-  margin-top: 100px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-.grafico {
-  width: 48%;
-  margin-bottom: 20px;
-}
+      .linha-links {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-@media (max-width: 768px) {
-  .grafico {
-    width: 100%;
-  }
-}
+      .graphs {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-laranja"></div>
+
+  <div class="container">
+    <div class="imagem-logo"></div>
+    <div class="caixa-texto">
+      <div class="linha-links">
+        <div class="esquerda">
+          <a href="/produtos-pessoais">produtos pessoais</a>
+          <a href="/produtos">produtos</a>
+        </div>
+        <div class="direita">
+          <a href="/produtos-vendidos">produtos vendidos</a>
+        </div>
+      </div>
+    </div>
+    <div class="graphs">
+      <canvas id="chart1" width="200" height="200"></canvas>
+      <canvas id="chart2" width="200" height="200"></canvas>
+    </div>
+  </div>
+
+  <script>
+    function generateData(seed) {
+      const data = [];
+      const today = new Date('2025-10-14');
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const value = 100 + Math.sin(i * 0.2 + seed) * 50 + (Math.random() - 0.5) * 10;
+        data.push({ date: date.toISOString().split('T')[0], value });
+      }
+      return data;
+    }
+
+    function createChart(id, label, color, seed) {
+      const data = generateData(seed);
+      new Chart(document.getElementById(id), {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date),
+          datasets: [{
+            label,
+            data: data.map(d => d.value),
+            borderColor: color,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: false,
+          scales: {
+            x: { display: true, title: { display: true, text: 'Dias' } },
+            y: { display: true, title: { display: true, text: 'Valor' } }
+          },
+          plugins: { legend: { display: true } }
+        }
+      });
+    }
+
+    createChart('chart1', 'Valor Cripto', 'orange', 0);
+    createChart('chart2', 'Valor Ações', 'blue', 1);
+  </script>
+
+</body>
+</html>
