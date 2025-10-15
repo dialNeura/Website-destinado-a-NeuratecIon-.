@@ -1,3 +1,5 @@
+
+</body>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -35,7 +37,6 @@
       width: 100%;
       height: calc(100% - 10px);
       display: flex;
-      flex-wrap: wrap;
       align-items: flex-start;
       padding: 20px;
       box-sizing: border-box;
@@ -132,43 +133,71 @@
   <script>
     function generateData(seed) {
       const data = [];
-      const today = new Date('2025-10-14');
+      const today = new Date('2025-10-14'); // Usando a data atual fornecida
       for (let i = 29; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
+        // Simulando valores de criptomoeda/ações com variação baseada em dias consecutivos
         const value = 100 + Math.sin(i * 0.2 + seed) * 50 + (Math.random() - 0.5) * 10;
-        data.push({ date: date.toISOString().split('T')[0], value });
+        data.push({ date: date.toISOString().split('T')[0], value: value });
       }
       return data;
     }
 
-    function createChart(id, label, color, seed) {
-      const data = generateData(seed);
-      new Chart(document.getElementById(id), {
-        type: 'line',
-        data: {
-          labels: data.map(d => d.date),
-          datasets: [{
-            label,
-            data: data.map(d => d.value),
-            borderColor: color,
-            fill: false
-          }]
-        },
-        options: {
-          responsive: false,
-          scales: {
-            x: { display: true, title: { display: true, text: 'Dias' } },
-            y: { display: true, title: { display: true, text: 'Valor' } }
-          },
-          plugins: { legend: { display: true } }
-        }
-      });
-    }
+    const data1 = generateData(0); // Dados para o primeiro gráfico (ex: criptomoeda)
+    const labels1 = data1.map(d => d.date);
+    const values1 = data1.map(d => d.value);
 
-    createChart('chart1', 'Valor Cripto', 'orange', 0);
-    createChart('chart2', 'Valor Ações', 'blue', 1);
+    new Chart(document.getElementById('chart1'), {
+      type: 'line',
+      data: {
+        labels: labels1,
+        datasets: [{
+          label: 'Valor Cripto',
+          data: values1,
+          borderColor: 'orange',
+          fill: false
+        }]
+      },
+      options: {
+        responsive: false,
+        scales: {
+          x: { display: true, title: { display: true, text: 'Dias' } },
+          y: { display: true, title: { display: true, text: 'Valor' } }
+        },
+        plugins: {
+          legend: { display: true }
+        }
+      }
+    });
+
+    const data2 = generateData(1); // Dados para o segundo gráfico (ex: ações)
+    const labels2 = data2.map(d => d.date);
+    const values2 = data2.map(d => d.value);
+
+    new Chart(document.getElementById('chart2'), {
+      type: 'line',
+      data: {
+        labels: labels2,
+        datasets: [{
+          label: 'Valor Ações',
+          data: values2,
+          borderColor: 'blue',
+          fill: false
+        }]
+      },
+      options: {
+        responsive: false,
+        scales: {
+          x: { display: true, title: { display: true, text: 'Dias' } },
+          y: { display: true, title: { display: true, text: 'Valor' } }
+        },
+        plugins: {
+          legend: { display: true }
+        }
+      }
+    });
   </script>
 
 </body>
-</html>
+</html></html>
