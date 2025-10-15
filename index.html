@@ -1,12 +1,9 @@
-
-</body>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Website destinado a Neuratec</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -80,13 +77,65 @@
       flex-grow: 1;
     }
 
-    .graphs {
-      display: flex;
-      justify-content: space-around;
+    /* Novas regras para os gráficos (mantendo a caixa-texto e logo nas posições originais) */
+    .charts-area {
       width: 100%;
       max-width: 1000px;
-      margin-top: 20px;
+      margin: 16px 20px 40px 20px; /* fica abaixo da área já existente */
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
       flex-wrap: wrap;
+    }
+
+    .chart-card {
+      width: 200px;
+      height: 260px; /* inclui título e controles */
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 8px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chart-card canvas {
+      width: 200px !important;
+      height: 200px !important;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      margin-bottom: 6px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .controls {
+      width: 100%;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .year-display {
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 62px;
+      text-align: center;
+    }
+
+    .play-btn {
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: orange;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
 
     @media (max-width: 768px) {
@@ -100,12 +149,14 @@
         align-items: flex-start;
       }
 
-      .graphs {
-        flex-direction: column;
-        align-items: center;
+      .charts-area {
+        gap: 12px;
+        justify-content: center;
       }
     }
   </style>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -124,80 +175,192 @@
         </div>
       </div>
     </div>
-    <div class="graphs">
-      <canvas id="chart1" width="200" height="200"></canvas>
-      <canvas id="chart2" width="200" height="200"></canvas>
+  </div>
+
+  <!-- ÁREA DOS GRÁFICOS (exatamente abaixo das caixas de texto) -->
+  <div class="charts-area" aria-label="Gráficos de Eficiência e Chance de Sucesso">
+    <!-- Gráfico 1: Eficiência -->
+    <div class="chart-card" id="card-eficiencia">
+      <div class="chart-title">Eficiência (por Cenário)</div>
+      <canvas id="chartEficiencia" width="200" height="200"></canvas>
+      <div class="controls">
+        <button id="playBtn" class="play-btn" title="Reproduzir/Pausar animação">▶</button>
+        <div class="year-display" id="yearDisplay">2021</div>
+      </div>
+    </div>
+
+    <!-- Gráfico 2: Chance de Sucesso Média -->
+    <div class="chart-card" id="card-chance">
+      <div class="chart-title">Chance de Sucesso Média (por Cenário)</div>
+      <canvas id="chartChance" width="200" height="200"></canvas>
+      <!-- Reaproveitamos o mesmo controle visual para ambos, mas o slider fica abaixo -->
+      <div class="controls" style="flex-direction: column; gap:6px;">
+        <input id="yearSlider" type="range" min="2021" max="2025" step="1" value="2021" style="width:160px;">
+      </div>
     </div>
   </div>
 
   <script>
-    function generateData(seed) {
-      const data = [];
-      const today = new Date('2025-10-14'); // Usando a data atual fornecida
-      for (let i = 29; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        // Simulando valores de criptomoeda/ações com variação baseada em dias consecutivos
-        const value = 100 + Math.sin(i * 0.2 + seed) * 50 + (Math.random() - 0.5) * 10;
-        data.push({ date: date.toISOString().split('T')[0], value: value });
+    // --- Dados simulados por ano (simulação anual; altere conforme necessidade) ---
+    const years = [2021, 2022, 2023, 2024, 2025];
+
+    // Para cada ano, valores por cenário: [Otimista, Realista, Pessimista]
+    const eficienciaByYear = {
+      2021: [0.80, 0.60, 0.40],
+      2022: [0.82, 0.58, 0.38],
+      2023: [0.78, 0.62, 0.42],
+      2024: [0.83, 0.61, 0.39],
+      2025: [0.85, 0.63, 0.45]
+    };
+
+    const chanceByYear = {
+      2021: [0.87, 0.65, 0.35],
+      2022: [0.86, 0.66, 0.36],
+      2023: [0.88, 0.64, 0.34],
+      2024: [0.90, 0.67, 0.37],
+      2025: [0.89, 0.68, 0.38]
+    };
+
+    // Labels (cenários)
+    const scenarioLabels = ['Otimista', 'Realista', 'Pessimista'];
+
+    // Configurações visuais comuns para replicar estilo
+    const commonOptions = {
+      responsive: false, // usaremos tamanho fixo 200x200
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 10 } }
+        },
+        y: {
+          beginAtZero: true,
+          max: 1.0,
+          ticks: {
+            callback: function(value) { return (value * 100).toFixed(0) + '%'; },
+            font: { size: 10 },
+            stepSize: 0.2
+          },
+          grid: {
+            color: 'rgba(0,0,0,0.04)'
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const v = context.parsed.y;
+              return (v * 100).toFixed(1) + '%';
+            }
+          }
+        }
+      },
+      elements: {
+        bar: {
+          borderRadius: 6
+        }
       }
-      return data;
+    };
+
+    // --- Criar o gráfico de Eficiência ---
+    const ctxEff = document.getElementById('chartEficiencia').getContext('2d');
+    const chartEficiencia = new Chart(ctxEff, {
+      type: 'bar',
+      data: {
+        labels: scenarioLabels,
+        datasets: [{
+          label: 'Eficiência',
+          data: eficienciaByYear[years[0]],
+          backgroundColor: 'rgba(93, 173, 226, 0.95)', // tom azul semelhante
+          borderColor: 'rgba(93, 173, 226, 1)',
+          borderWidth: 0
+        }]
+      },
+      options: commonOptions
+    });
+
+    // --- Criar o gráfico de Chance de Sucesso ---
+    const ctxChance = document.getElementById('chartChance').getContext('2d');
+    const chartChance = new Chart(ctxChance, {
+      type: 'bar',
+      data: {
+        labels: scenarioLabels,
+        datasets: [{
+          label: 'Chance de Sucesso Média',
+          data: chanceByYear[years[0]],
+          backgroundColor: 'rgba(255, 140, 166, 0.95)', // tom rosa semelhante
+          borderColor: 'rgba(255, 140, 166, 1)',
+          borderWidth: 0
+        }]
+      },
+      options: commonOptions
+    });
+
+    // --- Controles de tempo/ano e animação ---
+    const yearSlider = document.getElementById('yearSlider');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const playBtn = document.getElementById('playBtn');
+
+    let currentYearIndex = 0;
+    let playInterval = null;
+
+    function updateChartsForYear(year) {
+      // Atualiza displays e dados
+      yearDisplay.textContent = year;
+      // Atualiza dados dos datasets
+      chartEficiencia.data.datasets[0].data = eficienciaByYear[year].slice();
+      chartEficiencia.update();
+      chartChance.data.datasets[0].data = chanceByYear[year].slice();
+      chartChance.update();
     }
 
-    const data1 = generateData(0); // Dados para o primeiro gráfico (ex: criptomoeda)
-    const labels1 = data1.map(d => d.date);
-    const values1 = data1.map(d => d.value);
-
-    new Chart(document.getElementById('chart1'), {
-      type: 'line',
-      data: {
-        labels: labels1,
-        datasets: [{
-          label: 'Valor Cripto',
-          data: values1,
-          borderColor: 'orange',
-          fill: false
-        }]
-      },
-      options: {
-        responsive: false,
-        scales: {
-          x: { display: true, title: { display: true, text: 'Dias' } },
-          y: { display: true, title: { display: true, text: 'Valor' } }
-        },
-        plugins: {
-          legend: { display: true }
-        }
-      }
+    // Evento slider
+    yearSlider.addEventListener('input', (e) => {
+      const year = parseInt(e.target.value, 10);
+      currentYearIndex = years.indexOf(year);
+      updateChartsForYear(year);
+      // garantir estado pausa se slider manual for utilizado
+      stopPlayback();
     });
 
-    const data2 = generateData(1); // Dados para o segundo gráfico (ex: ações)
-    const labels2 = data2.map(d => d.date);
-    const values2 = data2.map(d => d.value);
+    // Play/Pause
+    function startPlayback() {
+      if (playInterval) return;
+      playBtn.textContent = '❚❚';
+      playBtn.title = 'Pausar reprodução';
+      playInterval = setInterval(() => {
+        currentYearIndex = (currentYearIndex + 1) % years.length;
+        const year = years[currentYearIndex];
+        yearSlider.value = year;
+        updateChartsForYear(year);
+      }, 1200); // avança a cada 1.2s (simulação anual)
+    }
 
-    new Chart(document.getElementById('chart2'), {
-      type: 'line',
-      data: {
-        labels: labels2,
-        datasets: [{
-          label: 'Valor Ações',
-          data: values2,
-          borderColor: 'blue',
-          fill: false
-        }]
-      },
-      options: {
-        responsive: false,
-        scales: {
-          x: { display: true, title: { display: true, text: 'Dias' } },
-          y: { display: true, title: { display: true, text: 'Valor' } }
-        },
-        plugins: {
-          legend: { display: true }
-        }
-      }
+    function stopPlayback() {
+      if (!playInterval) return;
+      clearInterval(playInterval);
+      playInterval = null;
+      playBtn.textContent = '▶';
+      playBtn.title = 'Reproduzir animação';
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (playInterval) stopPlayback();
+      else startPlayback();
     });
+
+    // Inicialização
+    (function init() {
+      // define slider para o ano inicial (primeiro do array)
+      yearSlider.min = years[0];
+      yearSlider.max = years[years.length - 1];
+      yearSlider.value = years[0];
+      currentYearIndex = 0;
+      updateChartsForYear(years[0]);
+    })();
   </script>
 
 </body>
-</html></html>
+</html>
