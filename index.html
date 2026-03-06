@@ -1,366 +1,339 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Website destinado a Neuratec</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interface Laranja — Catálogo</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      font-family: sans-serif;
-      border-left: 10px solid orange;
-      border-right: 10px solid orange;
-      box-sizing: border-box;
-    }
+    /* --- Estrutura base e bordas laranja (tela cheia) --- */
+    :root{ --laranja:#ff8a4b; --radius:10px; }
+    html,body{ height:100%; width:100%; margin:0; padding:0; box-sizing:border-box; font-family: sans-serif; background:#fff; }/* Borda externa laranja — corresponde ao enquadramento laranja da imagem */
+.frame{
+  position:fixed; inset:0; padding:40px; background:var(--laranja); box-sizing:border-box; display:flex; }
 
-    .top-laranja {
-      height: 10px;
-      background-color: orange;
-    }
+/* Área interna branca onde o conteúdo real fica — deixa margem interna para o frame laranja */
+.viewport{
+  flex:1; background:#fff; border-radius:6px; overflow:hidden; position:relative; display:flex; flex-direction:column;
+}
 
-    .imagem-logo {
-      width: 128px;
-      height: 128px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-image: url('NeuratechLOGO.jpg');
-      margin-right: 20px;
-    }
+/* Topo laranja fino (na imagem há uma faixa laranja superior interna) */
+.top-laranja{ height:16px; background:var(--laranja); }
 
-    .container {
-      width: 100%;
-      height: calc(100% - 10px);
-      display: flex;
-      align-items: flex-start;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+/* Cabeçalho: logo no canto superior esquerdo + sistema de abas (ao lado da imagem) */
+.header{
+  display:flex; align-items:flex-start; gap:20px; padding:28px 48px; box-sizing:border-box;
+}
 
-    .caixa-texto {
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      padding: 20px;
-      border-top: 10px solid orange;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1000px;
-      flex-wrap: wrap;
-      box-sizing: border-box;
-    }
+.logo{
+  width:128px; height:128px; background-size:cover; background-position:center; flex:0 0 128px; border-radius:6px;
+}
 
-    .caixa-texto a {
-      text-decoration: none;
-      color: #333;
-      margin: 5px 10px;
-    }
+/* Abas: estilo conforme imagem — borda arredondada, aba do meio elevada e branca */
+.tabs{
+  flex:1; display:flex; align-items:center; justify-content:center; position:relative;
+}
 
-    .linha-links {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      flex-wrap: wrap;
-    }
+.tabs .track{
+  width:100%; max-width:900px; background:#e6e6e6; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; padding:0 36px; box-sizing:border-box;
+}
 
-    .linha-links .esquerda, .linha-links .direita {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.tab{
+  position:relative; padding:14px 36px; border-radius:12px; cursor:pointer; user-select:none; font-weight:500; color:#222; text-transform: none;
+}
 
-    .linha-links .esquerda {
-      flex-grow: 1;
-    }
+/* Aba ativa central: elevada, fundo branco, borda arredondada superior maior para dar efeito de aba "recortada" */
+.tab.active{
+  background:#fff; box-shadow:0 6px 0 rgba(0,0,0,0.03); transform:translateY(-12px); margin-top:-12px; border-radius:12px 12px 0 0; z-index:2;
+}
 
-    /* Novas regras para os gráficos (mantendo a caixa-texto e logo nas posições originais) */
-    .charts-area {
-      width: 100%;
-      max-width: 1000px;
-      margin: 16px 20px 40px 20px; /* fica abaixo da área já existente */
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
+/* Conteúdo abaixo das abas */
+.content{
+  padding:28px 48px 40px 48px; box-sizing:border-box; flex:1; position:relative; overflow:auto;
+}
 
-    .chart-card {
-      width: 200px;
-      height: 260px; /* inclui título e controles */
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 8px;
-      box-sizing: border-box;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+/* Caixa principal (onde os links/abas antigas estavam) — agora substituído por painel de conteúdo */
+.panel{
+  width:100%; box-sizing:border-box;
+}
 
-    .chart-card canvas {
-      width: 200px !important;
-      height: 200px !important;
-    }
+/* Grid de cartões do catálogo — conforme a imagem: 3 colunas, espaçamento generoso */
+.product-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:48px; align-items:start; margin-top:20px; 
+}
 
-    .chart-title {
-      font-size: 13px;
-      margin-bottom: 6px;
-      text-align: center;
-      font-weight: 600;
-    }
+.card{
+  background:transparent; display:flex; flex-direction:column; gap:12px; align-items:flex-start; position:relative; min-height:340px;
+}
 
-    .controls {
-      width: 100%;
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-    }
+.card .image{
+  width:100%; height:290px; background:#cfcfcf; border:1px solid rgba(0,0,0,0.06); border-radius:4px; display:block; box-sizing:border-box; overflow:hidden; 
+}
 
-    .year-display {
-      font-weight: 700;
-      font-size: 14px;
-      min-width: 62px;
-      text-align: center;
-    }
+.card .title{
+  font-size:18px; color:#111; margin-top:8px; font-weight:500; display:block; 
+}
 
-    .play-btn {
-      padding: 6px 8px;
-      border-radius: 6px;
-      background: orange;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+.card .price{ font-size:16px; color:#111; margin-top:6px; }
 
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+.card .stock-btn{ position:absolute; left:18px; bottom:22px; background:#fff; border-radius:16px; padding:8px 12px; box-shadow:0 2px 0 rgba(0,0,0,0.06); border:1px solid rgba(0,0,0,0.06); cursor:pointer; }
 
-      .linha-links {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+/* Canvas do gráfico: posicionado exatamente na região inferior esquerda (aprox. conforme imagem). */
+.chart-wrap{ position:absolute; left:48px; bottom:48px; width:320px; height:220px; background:transparent; }
 
-      .charts-area {
-        gap: 12px;
-        justify-content: center;
-      }
-    }
+/* Responsividade: empilhar no mobile mantendo tela cheia */
+@media (max-width:1100px){
+  .product-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+@media (max-width:700px){
+  .header{ padding:18px; }
+  .tabs .track{ padding:0 18px; }
+  .product-grid{ grid-template-columns:1fr; gap:28px; }
+  .chart-wrap{ position:static; margin-top:40px; width:100%; height:260px; }
+  .frame{ padding:18px; }
+}
+
+/* Pequenos ajustes visuais para aproximar com a imagem fornecida */
+.caption{ color:#666; font-size:14px; }
+
+/* Estilos do formulário inline (edição de título) */
+.title[contenteditable]{ outline: none; }
+
   </style>
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body>  <div class="frame"> <!-- frame laranja -->
+    <div class="viewport">
+      <div class="top-laranja"></div><header class="header">
+    <div class="logo" id="logo" style="background-image:url('NeuratechLOGO.jpg')" aria-label="Logomarca"></div>
 
-  <div class="top-laranja"></div>
-
-  <div class="container">
-    <div class="imagem-logo"></div>
-    <div class="caixa-texto">
-      <div class="linha-links">
-        <div class="esquerda">
-          <a href="/produtos-pessoais">produtos pessoais</a>
-          <a href="/produtos">produtos</a>
-        </div>
-        <div class="direita">
-          <a href="/produtos-vendidos">produtos vendidos</a>
-        </div>
+    <nav class="tabs" role="tablist" aria-label="Navegação principal">
+      <div class="track">
+        <div class="tab" data-tab="vendidos">Produtos Vendidos</div>
+        <div class="tab active" data-tab="produtos">Produtos</div>
+        <div class="tab" data-tab="pessoais">Produtos Pessoais</div>
       </div>
-    </div>
-  </div>
+    </nav>
+  </header>
 
-  <!-- ÁREA DOS GRÁFICOS (exatamente abaixo das caixas de texto) -->
-  <div class="charts-area" aria-label="Gráficos de Eficiência e Chance de Sucesso">
-    <!-- Gráfico 1: Eficiência -->
-    <div class="chart-card" id="card-eficiencia">
-      <div class="chart-title">Eficiência (por Cenário)</div>
-      <canvas id="chartEficiencia" width="200" height="200"></canvas>
-      <div class="controls">
-        <button id="playBtn" class="play-btn" title="Reproduzir/Pausar animação">▶</button>
-        <div class="year-display" id="yearDisplay">2021</div>
+  <main class="content">
+    <!-- Painéis por aba -->
+    <section class="panel" id="panel-vendidos" data-panel="vendidos" hidden>
+      <p class="caption">Catálogo de produtos vendidos (visualização histórica).</p>
+      <!-- Conteúdo exemplo; no futuro pode listar produtos vendidos dinamicamente -->
+    </section>
+
+    <section class="panel" id="panel-produtos" data-panel="produtos">
+      <p class="caption">Catálogo — clique no título para editar diretamente (salvará no backend).</p>
+
+      <div class="product-grid" id="product-grid">
+        <!-- Três cartões conforme a imagem. As imagens são placeholders ("nula") — substitua pelos nomes dos arquivos posteriormente. -->
+
+        <!-- Card 1 -->
+        <article class="card" data-id="1">
+          <div class="image" data-src="produto1-null.png" id="img-1" aria-hidden="true"></div>
+          <div class="title" contenteditable="true" data-field="title">Aderir Título</div>
+          <div class="price">R$20.000,00</div>
+          <button class="stock-btn" onclick="checkStock(1)">Verificar Estoque</button>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="card" data-id="2">
+          <div class="image" data-src="produto2-null.png" id="img-2" aria-hidden="true"></div>
+          <div class="title" contenteditable="true" data-field="title">Aderir Título 2</div>
+          <div class="price">R$20.000,00</div>
+          <button class="stock-btn" onclick="checkStock(2)">Verificar Estoque</button>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card" data-id="3">
+          <div class="image" data-src="produto3-null.png" id="img-3" aria-hidden="true"></div>
+          <div class="title" contenteditable="true" data-field="title">Aderir Título 3</div>
+          <div class="price">R$20.000,00</div>
+          <button class="stock-btn" onclick="checkStock(3)">Verificar Estoque</button>
+        </article>
+
       </div>
+
+    </section>
+
+    <section class="panel" id="panel-pessoais" data-panel="pessoais" hidden>
+      <p class="caption">Produtos pessoais — espaço reservado para itens privados do vendedor.</p>
+    </section>
+
+    <!-- Gráfico interativo no canto inferior esquerdo (Chart.js) -->
+    <div class="chart-wrap">
+      <canvas id="chartCanvas" width="320" height="220"></canvas>
     </div>
 
-    <!-- Gráfico 2: Chance de Sucesso Média -->
-    <div class="chart-card" id="card-chance">
-      <div class="chart-title">Chance de Sucesso Média (por Cenário)</div>
-      <canvas id="chartChance" width="200" height="200"></canvas>
-      <!-- Reaproveitamos o mesmo controle visual para ambos, mas o slider fica abaixo -->
-      <div class="controls" style="flex-direction: column; gap:6px;">
-        <input id="yearSlider" type="range" min="2021" max="2025" step="1" value="2021" style="width:160px;">
-      </div>
+  </main>
+</div>
+
+  </div>  <!-- Modal simples para exibir quantidade em estoque -->  <div id="stock-modal" style="position:fixed; left:0; top:0; right:0; bottom:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.35);">
+    <div style="background:#fff; padding:20px 24px; border-radius:8px; min-width:260px; box-shadow:0 6px 24px rgba(0,0,0,0.2);">
+      <div id="stock-modal-content">Carregando...</div>
+      <div style="text-align:right; margin-top:12px;"><button onclick="closeStockModal()" style="padding:6px 12px; border-radius:6px;">Fechar</button></div>
     </div>
-  </div>
+  </div>  <!-- Bibliotecas externas -->  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
+    /* --------- Lógica de abas (substitui os botões) --------- */
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.dataset.tab;
+        document.querySelectorAll('[data-panel]').forEach(p=>p.hidden = p.dataset.panel !== target);
+      });
+    });
 
-  <script>
-    // --- Dados simulados por ano (simulação anual; altere conforme necessidade) ---
-    const years = [2021, 2022, 2023, 2024, 2025];
+    /* --------- Carregar imagens placeholder (substitua os nomes dos arquivos posteriormente) --------- */
+    function loadPlaceholders(){
+      document.querySelectorAll('.card .image').forEach(imgEl => {
+        const src = imgEl.dataset.src || 'nulo.png';
+        // se existir arquivo local com esse nome, ele será carregado automaticamente
+        imgEl.style.backgroundImage = `url('${src}')`;
+      });
+    }
+    loadPlaceholders();
 
-    // Para cada ano, valores por cenário: [Otimista, Realista, Pessimista]
-    const eficienciaByYear = {
-      2021: [0.80, 0.60, 0.40],
-      2022: [0.82, 0.58, 0.38],
-      2023: [0.78, 0.62, 0.42],
-      2024: [0.83, 0.61, 0.39],
-      2025: [0.85, 0.63, 0.45]
-    };
-
-    const chanceByYear = {
-      2021: [0.87, 0.65, 0.35],
-      2022: [0.86, 0.66, 0.36],
-      2023: [0.88, 0.64, 0.34],
-      2024: [0.90, 0.67, 0.37],
-      2025: [0.89, 0.68, 0.38]
-    };
-
-    // Labels (cenários)
-    const scenarioLabels = ['Otimista', 'Realista', 'Pessimista'];
-
-    // Configurações visuais comuns para replicar estilo
-    const commonOptions = {
-      responsive: false, // usaremos tamanho fixo 200x200
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: { font: { size: 10 } }
-        },
-        y: {
-          beginAtZero: true,
-          max: 1.0,
-          ticks: {
-            callback: function(value) { return (value * 100).toFixed(0) + '%'; },
-            font: { size: 10 },
-            stepSize: 0.2
-          },
-          grid: {
-            color: 'rgba(0,0,0,0.04)'
-          }
-        }
+    /* --------- Chart.js — gráfico interativo conforme imagem compartilhada --------- */
+    const ctx = document.getElementById('chartCanvas').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Otimista','Realista','Pessimista'],
+        datasets: [
+          { label: 'Eficiência', data: [0.8,0.6,0.35] },
+          { label: 'Chance de Sucesso Média', data: [0.9,0.65,0.3] }
+        ]
       },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const v = context.parsed.y;
-              return (v * 100).toFixed(1) + '%';
-            }
-          }
-        }
-      },
-      elements: {
-        bar: {
-          borderRadius: 6
-        }
+      options: {
+        responsive: false,
+        scales: { y:{ beginAtZero:true, max:1 } },
+        plugins:{ legend:{ position:'bottom' } }
       }
-    };
-
-    // --- Criar o gráfico de Eficiência ---
-    const ctxEff = document.getElementById('chartEficiencia').getContext('2d');
-    const chartEficiencia = new Chart(ctxEff, {
-      type: 'bar',
-      data: {
-        labels: scenarioLabels,
-        datasets: [{
-          label: 'Eficiência',
-          data: eficienciaByYear[years[0]],
-          backgroundColor: 'rgba(93, 173, 226, 0.95)', // tom azul semelhante
-          borderColor: 'rgba(93, 173, 226, 1)',
-          borderWidth: 0
-        }]
-      },
-      options: commonOptions
     });
 
-    // --- Criar o gráfico de Chance de Sucesso ---
-    const ctxChance = document.getElementById('chartChance').getContext('2d');
-    const chartChance = new Chart(ctxChance, {
-      type: 'bar',
-      data: {
-        labels: scenarioLabels,
-        datasets: [{
-          label: 'Chance de Sucesso Média',
-          data: chanceByYear[years[0]],
-          backgroundColor: 'rgba(255, 140, 166, 0.95)', // tom rosa semelhante
-          borderColor: 'rgba(255, 140, 166, 1)',
-          borderWidth: 0
-        }]
-      },
-      options: commonOptions
-    });
-
-    // --- Controles de tempo/ano e animação ---
-    const yearSlider = document.getElementById('yearSlider');
-    const yearDisplay = document.getElementById('yearDisplay');
-    const playBtn = document.getElementById('playBtn');
-
-    let currentYearIndex = 0;
-    let playInterval = null;
-
-    function updateChartsForYear(year) {
-      // Atualiza displays e dados
-      yearDisplay.textContent = year;
-      // Atualiza dados dos datasets
-      chartEficiencia.data.datasets[0].data = eficienciaByYear[year].slice();
-      chartEficiencia.update();
-      chartChance.data.datasets[0].data = chanceByYear[year].slice();
-      chartChance.update();
+    /* --------- Sistema simples de backend (API) — front tenta consultar /api/products e /api/stock. */
+    // Função auxiliar: tenta obter produtos do backend; se não houver backend, usa dados locais.
+    async function fetchProducts(){
+      try{
+        const r = await fetch('/api/products');
+        if(!r.ok) throw new Error('sem api');
+        const data = await r.json();
+        renderProducts(data);
+      }catch(e){
+        // fallback local (dados iniciais transferidos para a interface visual)
+        const fallback = [
+          { id:1, title:'Aderir Título', price:'R$20.000,00', image:'produto1-null.png' },
+          { id:2, title:'Aderir Título 2', price:'R$20.000,00', image:'produto2-null.png' },
+          { id:3, title:'Aderir Título 3', price:'R$20.000,00', image:'produto3-null.png' }
+        ];
+        renderProducts(fallback);
+      }
     }
 
-    // Evento slider
-    yearSlider.addEventListener('input', (e) => {
-      const year = parseInt(e.target.value, 10);
-      currentYearIndex = years.indexOf(year);
-      updateChartsForYear(year);
-      // garantir estado pausa se slider manual for utilizado
-      stopPlayback();
-    });
-
-    // Play/Pause
-    function startPlayback() {
-      if (playInterval) return;
-      playBtn.textContent = '❚❚';
-      playBtn.title = 'Pausar reprodução';
-      playInterval = setInterval(() => {
-        currentYearIndex = (currentYearIndex + 1) % years.length;
-        const year = years[currentYearIndex];
-        yearSlider.value = year;
-        updateChartsForYear(year);
-      }, 1200); // avança a cada 1.2s (simulação anual)
+    function renderProducts(products){
+      const grid = document.getElementById('product-grid');
+      const cards = grid.querySelectorAll('.card');
+      cards.forEach(card => {
+        const id = Number(card.dataset.id);
+        const p = products.find(x=>x.id===id);
+        if(!p) return;
+        const imgEl = card.querySelector('.image');
+        imgEl.style.backgroundImage = `url('`+ (p.image || imgEl.dataset.src) + `')`;
+        const titleEl = card.querySelector('.title');
+        titleEl.textContent = p.title || titleEl.textContent;
+        const priceEl = card.querySelector('.price');
+        priceEl.textContent = p.price || priceEl.textContent;
+        // permitir edição inline
+        titleEl.addEventListener('blur', ()=> saveTitle(id, titleEl.textContent) );
+      });
     }
 
-    function stopPlayback() {
-      if (!playInterval) return;
-      clearInterval(playInterval);
-      playInterval = null;
-      playBtn.textContent = '▶';
-      playBtn.title = 'Reproduzir animação';
+    // salvar título no backend (PUT /api/products/:id) — se não houver backend, apenas loga
+    async function saveTitle(id, newTitle){
+      try{
+        const r = await fetch('/api/products/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ title:newTitle }) });
+        if(!r.ok) throw new Error('Erro ao salvar');
+        // opcional: atualizar UI a partir da resposta
+      }catch(e){
+        console.warn('Backend indisponível — alteração aplicada apenas localmente:', id, newTitle);
+      }
     }
 
-    playBtn.addEventListener('click', () => {
-      if (playInterval) stopPlayback();
-      else startPlayback();
+    /* --------- Sistema de estoque: botão "Verificar Estoque" chama /api/stock/:id (backend) ou mock local. */
+    async function checkStock(id){
+      try{
+        const r = await fetch('/api/stock/'+id);
+        if(!r.ok) throw new Error('no api');
+        const data = await r.json();
+        showStockModal(`Produto #${id}: ${data.quantity} unidades em estoque.`);
+      }catch(e){
+        // fallback simulado
+        const simulated = { quantity: Math.floor(Math.random()*20) };
+        showStockModal(`Produto #${id}: ${simulated.quantity} unidades em estoque. (simulado)`);
+      }
+    }
+
+    function showStockModal(html){
+      const modal = document.getElementById('stock-modal');
+      document.getElementById('stock-modal-content').innerText = html;
+      modal.style.display = 'flex';
+    }
+    function closeStockModal(){ document.getElementById('stock-modal').style.display='none'; }
+
+    /* Inicializar */
+    fetchProducts();
+
+    /* --- Observações sobre como substituir placeholders de imagens ---
+       - Substitua os valores data-src nas divs .image pelos nomes reais (ex.: produto1.png). 
+       - Caso haja backend, garanta que cada produto retorne o campo `image` com o caminho relativo/absoluto. 
+    */
+  </script>  <!--
+    --- Backend (exemplo Node.js/Express) ---
+    Cole este snippet em um arquivo server.js e execute com `node server.js`. Ele expõe endpoints simples
+    para /api/products e /api/stock. Use um banco de dados real em produção; aqui só demonstra a interface.
+
+    const express = require('express');
+    const cors = require('cors');
+    const app = express();
+    app.use(cors());
+    app.use(express.json());
+
+    // dados em memória (exemplo)
+    let products = [
+      { id:1, title:'Aderir Título', price:'R$20.000,00', image:'produto1-null.png' },
+      { id:2, title:'Aderir Título 2', price:'R$20.000,00', image:'produto2-null.png' },
+      { id:3, title:'Aderir Título 3', price:'R$20.000,00', image:'produto3-null.png' }
+    ];
+
+    let stock = { 1:12, 2:4, 3:0 };
+
+    app.get('/api/products', (req,res)=> res.json(products));
+
+    app.put('/api/products/:id', (req,res)=>{
+      const id = Number(req.params.id);
+      const p = products.find(x=>x.id===id);
+      if(!p) return res.status(404).json({error:'not found'});
+      Object.assign(p, req.body);
+      return res.json(p);
     });
 
-    // Inicialização
-    (function init() {
-      // define slider para o ano inicial (primeiro do array)
-      yearSlider.min = years[0];
-      yearSlider.max = years[years.length - 1];
-      yearSlider.value = years[0];
-      currentYearIndex = 0;
-      updateChartsForYear(years[0]);
-    })();
-  </script>
+    app.get('/api/stock/:id', (req,res)=>{
+      const id = Number(req.params.id);
+      res.json({ quantity: stock[id] || 0 });
+    });
 
-</body>
+    app.post('/api/stock/:id', (req,res)=>{
+      const id = Number(req.params.id);
+      const q = Number(req.body.quantity)||0;
+      stock[id]=q;
+      res.json({ok:true});
+    });
+
+    app.use(express.static('public'));// servir arquivos estáticos (imagens)
+    app.listen(3000, ()=>console.log('API rodando na porta 3000'));
+
+    --- Integração com loja Instagram / marketplaces ---
+    Para sincronizar produtos com uma loja Instagram (Facebook Catalog): é necessário criar um catálogo no Meta Business,
+    obter token de acesso (Graph API) e usar endpoints para sincronizar itens (ou usar feeds CSV/JSON hospedados).
+    Posso especificar os passos e o payload necessário se desejar.
+  --></body>
 </html>
