@@ -1,339 +1,338 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interface Laranja — Catálogo</title>
-  <style>
-    /* --- Estrutura base e bordas laranja (tela cheia) --- */
-    :root{ --laranja:#ff8a4b; --radius:10px; }
-    html,body{ height:100%; width:100%; margin:0; padding:0; box-sizing:border-box; font-family: sans-serif; background:#fff; }/* Borda externa laranja — corresponde ao enquadramento laranja da imagem */
-.frame{
-  position:fixed; inset:0; padding:40px; background:var(--laranja); box-sizing:border-box; display:flex; }
-
-/* Área interna branca onde o conteúdo real fica — deixa margem interna para o frame laranja */
-.viewport{
-  flex:1; background:#fff; border-radius:6px; overflow:hidden; position:relative; display:flex; flex-direction:column;
-}
-
-/* Topo laranja fino (na imagem há uma faixa laranja superior interna) */
-.top-laranja{ height:16px; background:var(--laranja); }
-
-/* Cabeçalho: logo no canto superior esquerdo + sistema de abas (ao lado da imagem) */
-.header{
-  display:flex; align-items:flex-start; gap:20px; padding:28px 48px; box-sizing:border-box;
-}
-
-.logo{
-  width:128px; height:128px; background-size:cover; background-position:center; flex:0 0 128px; border-radius:6px;
-}
-
-/* Abas: estilo conforme imagem — borda arredondada, aba do meio elevada e branca */
-.tabs{
-  flex:1; display:flex; align-items:center; justify-content:center; position:relative;
-}
-
-.tabs .track{
-  width:100%; max-width:900px; background:#e6e6e6; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; padding:0 36px; box-sizing:border-box;
-}
-
-.tab{
-  position:relative; padding:14px 36px; border-radius:12px; cursor:pointer; user-select:none; font-weight:500; color:#222; text-transform: none;
-}
-
-/* Aba ativa central: elevada, fundo branco, borda arredondada superior maior para dar efeito de aba "recortada" */
-.tab.active{
-  background:#fff; box-shadow:0 6px 0 rgba(0,0,0,0.03); transform:translateY(-12px); margin-top:-12px; border-radius:12px 12px 0 0; z-index:2;
-}
-
-/* Conteúdo abaixo das abas */
-.content{
-  padding:28px 48px 40px 48px; box-sizing:border-box; flex:1; position:relative; overflow:auto;
-}
-
-/* Caixa principal (onde os links/abas antigas estavam) — agora substituído por painel de conteúdo */
-.panel{
-  width:100%; box-sizing:border-box;
-}
-
-/* Grid de cartões do catálogo — conforme a imagem: 3 colunas, espaçamento generoso */
-.product-grid{
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:48px; align-items:start; margin-top:20px; 
-}
-
-.card{
-  background:transparent; display:flex; flex-direction:column; gap:12px; align-items:flex-start; position:relative; min-height:340px;
-}
-
-.card .image{
-  width:100%; height:290px; background:#cfcfcf; border:1px solid rgba(0,0,0,0.06); border-radius:4px; display:block; box-sizing:border-box; overflow:hidden; 
-}
-
-.card .title{
-  font-size:18px; color:#111; margin-top:8px; font-weight:500; display:block; 
-}
-
-.card .price{ font-size:16px; color:#111; margin-top:6px; }
-
-.card .stock-btn{ position:absolute; left:18px; bottom:22px; background:#fff; border-radius:16px; padding:8px 12px; box-shadow:0 2px 0 rgba(0,0,0,0.06); border:1px solid rgba(0,0,0,0.06); cursor:pointer; }
-
-/* Canvas do gráfico: posicionado exatamente na região inferior esquerda (aprox. conforme imagem). */
-.chart-wrap{ position:absolute; left:48px; bottom:48px; width:320px; height:220px; background:transparent; }
-
-/* Responsividade: empilhar no mobile mantendo tela cheia */
-@media (max-width:1100px){
-  .product-grid{ grid-template-columns:repeat(2, 1fr); }
-}
-@media (max-width:700px){
-  .header{ padding:18px; }
-  .tabs .track{ padding:0 18px; }
-  .product-grid{ grid-template-columns:1fr; gap:28px; }
-  .chart-wrap{ position:static; margin-top:40px; width:100%; height:260px; }
-  .frame{ padding:18px; }
-}
-
-/* Pequenos ajustes visuais para aproximar com a imagem fornecida */
-.caption{ color:#666; font-size:14px; }
-
-/* Estilos do formulário inline (edição de título) */
-.title[contenteditable]{ outline: none; }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuratec • Catálogo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --neura-primary: #f97316;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+        }
+        
+        /* Glassmorphism inspirado no botão Neuratec transparente */
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        
+        .tab-active {
+            background: white;
+            color: #1f2937;
+            border-bottom: 3px solid #f97316;
+            box-shadow: 0 2px 10px rgba(249, 115, 22, 0.15);
+        }
+        
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        .product-image-container {
+            background: #f3f4f6;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        }
+        
+        .modal {
+            animation: modalPop 0.3s ease-out forwards;
+        }
+        
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .orange-header {
+            background: linear-gradient(to right, #f97316, #fb923c);
+        }
+    </style>
 </head>
-<body>  <div class="frame"> <!-- frame laranja -->
-    <div class="viewport">
-      <div class="top-laranja"></div><header class="header">
-    <div class="logo" id="logo" style="background-image:url('NeuratechLOGO.jpg')" aria-label="Logomarca"></div>
+<body class="min-h-screen text-gray-800">
+    <!-- Header Laranja + Logo -->
+    <div class="orange-header h-3 w-full"></div>
+    <div class="max-w-7xl mx-auto px-8 py-6">
+        <div class="flex items-center justify-between">
+            <!-- Logo Neuratec (arquivo exato que você pediu) -->
+            <img src="file_000000004fc4622f8c5ec6ef85ccf0f3.png" 
+                 alt="Neuratec Logo" 
+                 class="h-12 w-auto object-contain">
 
-    <nav class="tabs" role="tablist" aria-label="Navegação principal">
-      <div class="track">
-        <div class="tab" data-tab="vendidos">Produtos Vendidos</div>
-        <div class="tab active" data-tab="produtos">Produtos</div>
-        <div class="tab" data-tab="pessoais">Produtos Pessoais</div>
-      </div>
-    </nav>
-  </header>
-
-  <main class="content">
-    <!-- Painéis por aba -->
-    <section class="panel" id="panel-vendidos" data-panel="vendidos" hidden>
-      <p class="caption">Catálogo de produtos vendidos (visualização histórica).</p>
-      <!-- Conteúdo exemplo; no futuro pode listar produtos vendidos dinamicamente -->
-    </section>
-
-    <section class="panel" id="panel-produtos" data-panel="produtos">
-      <p class="caption">Catálogo — clique no título para editar diretamente (salvará no backend).</p>
-
-      <div class="product-grid" id="product-grid">
-        <!-- Três cartões conforme a imagem. As imagens são placeholders ("nula") — substitua pelos nomes dos arquivos posteriormente. -->
-
-        <!-- Card 1 -->
-        <article class="card" data-id="1">
-          <div class="image" data-src="produto1-null.png" id="img-1" aria-hidden="true"></div>
-          <div class="title" contenteditable="true" data-field="title">Aderir Título</div>
-          <div class="price">R$20.000,00</div>
-          <button class="stock-btn" onclick="checkStock(1)">Verificar Estoque</button>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="card" data-id="2">
-          <div class="image" data-src="produto2-null.png" id="img-2" aria-hidden="true"></div>
-          <div class="title" contenteditable="true" data-field="title">Aderir Título 2</div>
-          <div class="price">R$20.000,00</div>
-          <button class="stock-btn" onclick="checkStock(2)">Verificar Estoque</button>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="card" data-id="3">
-          <div class="image" data-src="produto3-null.png" id="img-3" aria-hidden="true"></div>
-          <div class="title" contenteditable="true" data-field="title">Aderir Título 3</div>
-          <div class="price">R$20.000,00</div>
-          <button class="stock-btn" onclick="checkStock(3)">Verificar Estoque</button>
-        </article>
-
-      </div>
-
-    </section>
-
-    <section class="panel" id="panel-pessoais" data-panel="pessoais" hidden>
-      <p class="caption">Produtos pessoais — espaço reservado para itens privados do vendedor.</p>
-    </section>
-
-    <!-- Gráfico interativo no canto inferior esquerdo (Chart.js) -->
-    <div class="chart-wrap">
-      <canvas id="chartCanvas" width="320" height="220"></canvas>
+            <!-- Sistema de Abas EXATAMENTE como na imagem -->
+            <div class="flex bg-white/70 glass rounded-3xl p-1.5 shadow-inner">
+                <button onclick="switchTab(0)" 
+                        id="tab-btn-0"
+                        class="tab-active px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">
+                    Produtos Vendidos
+                </button>
+                <button onclick="switchTab(1)" 
+                        id="tab-btn-1"
+                        class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">
+                    Produtos
+                </button>
+                <button onclick="switchTab(2)" 
+                        id="tab-btn-2"
+                        class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">
+                    Produtos Pessoais
+                </button>
+            </div>
+        </div>
     </div>
 
-  </main>
-</div>
+    <!-- Conteúdo das Abas -->
+    <div class="max-w-7xl mx-auto px-8 pb-12">
+        
+        <!-- ABA PRODUTOS (ativa por padrão - conteúdo EXATO da imagem) -->
+        <div id="tab-content-1" class="tab-content">
+            <!-- Catálogo de Produtos - 3 cards alinhados lado a lado -->
+            <div class="grid grid-cols-3 gap-8" id="product-grid">
+                <!-- Cards serão gerados via JavaScript -->
+            </div>
 
-  </div>  <!-- Modal simples para exibir quantidade em estoque -->  <div id="stock-modal" style="position:fixed; left:0; top:0; right:0; bottom:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.35);">
-    <div style="background:#fff; padding:20px 24px; border-radius:8px; min-width:260px; box-shadow:0 6px 24px rgba(0,0,0,0.2);">
-      <div id="stock-modal-content">Carregando...</div>
-      <div style="text-align:right; margin-top:12px;"><button onclick="closeStockModal()" style="padding:6px 12px; border-radius:6px;">Fechar</button></div>
+            <!-- Gráfico interativo EXATAMENTE no local da imagem -->
+            <div class="mt-12 glass rounded-3xl p-8">
+                <h2 class="text-lg font-semibold text-gray-700 mb-6 flex items-center gap-3">
+                    Eficiência e Chance de Sucesso por Cenário
+                    <span class="text-xs bg-orange-100 text-orange-600 px-3 py-1 rounded-full">Probabilidade</span>
+                </h2>
+                <div class="h-80">
+                    <canvas id="successChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA PRODUTOS VENDIDOS (placeholder) -->
+        <div id="tab-content-0" class="tab-content hidden">
+            <div class="glass rounded-3xl p-12 text-center">
+                <p class="text-gray-500 text-xl">📦 Produtos Vendidos em breve...</p>
+            </div>
+        </div>
+
+        <!-- ABA PRODUTOS PESSOAIS (placeholder) -->
+        <div id="tab-content-2" class="tab-content hidden">
+            <div class="glass rounded-3xl p-12 text-center">
+                <p class="text-gray-500 text-xl">👤 Produtos Pessoais em breve...</p>
+            </div>
+        </div>
     </div>
-  </div>  <!-- Bibliotecas externas -->  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
-    /* --------- Lógica de abas (substitui os botões) --------- */
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        tab.classList.add('active');
-        const target = tab.dataset.tab;
-        document.querySelectorAll('[data-panel]').forEach(p=>p.hidden = p.dataset.panel !== target);
-      });
-    });
 
-    /* --------- Carregar imagens placeholder (substitua os nomes dos arquivos posteriormente) --------- */
-    function loadPlaceholders(){
-      document.querySelectorAll('.card .image').forEach(imgEl => {
-        const src = imgEl.dataset.src || 'nulo.png';
-        // se existir arquivo local com esse nome, ele será carregado automaticamente
-        imgEl.style.backgroundImage = `url('${src}')`;
-      });
-    }
-    loadPlaceholders();
+    <!-- Modal de Estoque (sistema pronto para backend) -->
+    <div id="stock-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
+        <div class="modal glass max-w-md w-full mx-4 rounded-3xl p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold" id="modal-product-title">Verificar Estoque</h3>
+                <button onclick="closeModal()" 
+                        class="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-white/70 rounded-2xl p-6 text-center">
+                    <p class="text-sm text-gray-500">Quantidade em estoque</p>
+                    <p id="modal-stock-qty" class="text-5xl font-bold text-emerald-600 mt-2">247</p>
+                    <p class="text-xs text-emerald-500 mt-1">unidades disponíveis</p>
+                </div>
+                <div onclick="alert('🔄 Atualizando estoque via backend... (substitua por fetch)')" 
+                     class="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white text-center py-4 rounded-2xl font-medium transition-colors">
+                    Atualizar Estoque no Backend
+                </div>
+            </div>
+        </div>
+    </div>
 
-    /* --------- Chart.js — gráfico interativo conforme imagem compartilhada --------- */
-    const ctx = document.getElementById('chartCanvas').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Otimista','Realista','Pessimista'],
-        datasets: [
-          { label: 'Eficiência', data: [0.8,0.6,0.35] },
-          { label: 'Chance de Sucesso Média', data: [0.9,0.65,0.3] }
-        ]
-      },
-      options: {
-        responsive: false,
-        scales: { y:{ beginAtZero:true, max:1 } },
-        plugins:{ legend:{ position:'bottom' } }
-      }
-    });
-
-    /* --------- Sistema simples de backend (API) — front tenta consultar /api/products e /api/stock. */
-    // Função auxiliar: tenta obter produtos do backend; se não houver backend, usa dados locais.
-    async function fetchProducts(){
-      try{
-        const r = await fetch('/api/products');
-        if(!r.ok) throw new Error('sem api');
-        const data = await r.json();
-        renderProducts(data);
-      }catch(e){
-        // fallback local (dados iniciais transferidos para a interface visual)
-        const fallback = [
-          { id:1, title:'Aderir Título', price:'R$20.000,00', image:'produto1-null.png' },
-          { id:2, title:'Aderir Título 2', price:'R$20.000,00', image:'produto2-null.png' },
-          { id:3, title:'Aderir Título 3', price:'R$20.000,00', image:'produto3-null.png' }
+    <script>
+        // ==================== CONFIGURAÇÃO DE PRODUTOS (EDITÁVEL AQUI) ====================
+        // Títulos aparecem conforme inseridos na loja (Instagram ou website).
+        // Basta editar o array abaixo ou conectar via API depois.
+        const products = [
+            {
+                id: 1,
+                title: "Aderir Título",
+                price: "R$20.000,00",
+                image: "produto-1.jpg"   // ← SUBSTITUA PELO NOME DO SEU ARQUIVO AQUI
+            },
+            {
+                id: 2,
+                title: "Aderir Título 2",
+                price: "R$20.000,00",
+                image: "produto-2.jpg"   // ← SUBSTITUA PELO NOME DO SEU ARQUIVO AQUI
+            },
+            {
+                id: 3,
+                title: "Aderir Título 3",
+                price: "R$20.000,00",
+                image: "produto-3.jpg"   // ← SUBSTITUA PELO NOME DO SEU ARQUIVO AQUI
+            }
         ];
-        renderProducts(fallback);
-      }
-    }
 
-    function renderProducts(products){
-      const grid = document.getElementById('product-grid');
-      const cards = grid.querySelectorAll('.card');
-      cards.forEach(card => {
-        const id = Number(card.dataset.id);
-        const p = products.find(x=>x.id===id);
-        if(!p) return;
-        const imgEl = card.querySelector('.image');
-        imgEl.style.backgroundImage = `url('`+ (p.image || imgEl.dataset.src) + `')`;
-        const titleEl = card.querySelector('.title');
-        titleEl.textContent = p.title || titleEl.textContent;
-        const priceEl = card.querySelector('.price');
-        priceEl.textContent = p.price || priceEl.textContent;
-        // permitir edição inline
-        titleEl.addEventListener('blur', ()=> saveTitle(id, titleEl.textContent) );
-      });
-    }
+        // ==================== RENDERIZAÇÃO DOS CARDS ====================
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            
+            products.forEach(product => {
+                const cardHTML = `
+                    <div class="product-card glass rounded-3xl overflow-hidden border border-white/50">
+                        <!-- Caixa cinza claro EXATA da imagem -->
+                        <div class="product-image-container p-6">
+                            <img src="${product.image}" 
+                                 alt="${product.title}"
+                                 class="w-full h-full object-cover rounded-2xl">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-medium text-lg mb-1">${product.title}</h3>
+                            <p class="text-2xl font-semibold text-gray-800">${product.price}</p>
+                            
+                            <!-- Botão Verificar Estoque -->
+                            <button onclick="checkStock(\( {product.id}, ' \){product.title}')" 
+                                    class="mt-6 w-full bg-white border border-gray-200 hover:border-orange-300 text-gray-700 py-3.5 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-2">
+                                Verificar Estoque
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
 
-    // salvar título no backend (PUT /api/products/:id) — se não houver backend, apenas loga
-    async function saveTitle(id, newTitle){
-      try{
-        const r = await fetch('/api/products/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ title:newTitle }) });
-        if(!r.ok) throw new Error('Erro ao salvar');
-        // opcional: atualizar UI a partir da resposta
-      }catch(e){
-        console.warn('Backend indisponível — alteração aplicada apenas localmente:', id, newTitle);
-      }
-    }
+        // ==================== SISTEMA DE ESTOQUE (pronto para backend) ====================
+        let currentStockData = {
+            1: 247,
+            2: 183,
+            3: 312
+        };
 
-    /* --------- Sistema de estoque: botão "Verificar Estoque" chama /api/stock/:id (backend) ou mock local. */
-    async function checkStock(id){
-      try{
-        const r = await fetch('/api/stock/'+id);
-        if(!r.ok) throw new Error('no api');
-        const data = await r.json();
-        showStockModal(`Produto #${id}: ${data.quantity} unidades em estoque.`);
-      }catch(e){
-        // fallback simulado
-        const simulated = { quantity: Math.floor(Math.random()*20) };
-        showStockModal(`Produto #${id}: ${simulated.quantity} unidades em estoque. (simulado)`);
-      }
-    }
+        function checkStock(id, title) {
+            document.getElementById('modal-product-title').textContent = title;
+            document.getElementById('modal-stock-qty').textContent = currentStockData[id] || '—';
+            document.getElementById('stock-modal').classList.remove('hidden');
+            document.getElementById('stock-modal').classList.add('flex');
+        }
 
-    function showStockModal(html){
-      const modal = document.getElementById('stock-modal');
-      document.getElementById('stock-modal-content').innerText = html;
-      modal.style.display = 'flex';
-    }
-    function closeStockModal(){ document.getElementById('stock-modal').style.display='none'; }
+        function closeModal() {
+            const modal = document.getElementById('stock-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
 
-    /* Inicializar */
-    fetchProducts();
+        // ==================== SISTEMA DE ABAS ====================
+        function switchTab(tabIndex) {
+            // Remove active de todos os botões
+            for (let i = 0; i < 3; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                btn.classList.remove('tab-active');
+            }
+            // Ativa o clicado
+            document.getElementById(`tab-btn-${tabIndex}`).classList.add('tab-active');
+            
+            // Esconde todos os conteúdos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Mostra o conteúdo correto
+            document.getElementById(`tab-content-${tabIndex}`).classList.remove('hidden');
+        }
 
-    /* --- Observações sobre como substituir placeholders de imagens ---
-       - Substitua os valores data-src nas divs .image pelos nomes reais (ex.: produto1.png). 
-       - Caso haja backend, garanta que cada produto retorne o campo `image` com o caminho relativo/absoluto. 
-    */
-  </script>  <!--
-    --- Backend (exemplo Node.js/Express) ---
-    Cole este snippet em um arquivo server.js e execute com `node server.js`. Ele expõe endpoints simples
-    para /api/products e /api/stock. Use um banco de dados real em produção; aqui só demonstra a interface.
+        // ==================== GRÁFICO INTERATIVO (Chart.js) ====================
+        function createChart() {
+            const ctx = document.getElementById('successChart');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Oferta', 'Realiza Compra', 'Persuasiva'],
+                    datasets: [
+                        {
+                            label: 'Eficiência',
+                            data: [0.88, 0.67, 0.42],
+                            backgroundColor: '#3b82f6',
+                            borderColor: '#1e40af',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            barThickness: 45
+                        },
+                        {
+                            label: 'Chance de Sucesso Média',
+                            data: [0.94, 0.73, 0.38],
+                            backgroundColor: '#ec4899',
+                            borderColor: '#9f1239',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            barThickness: 45
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'start',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20,
+                                font: { size: 13 },
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                stepSize: 0.2,
+                                callback: value => value.toFixed(1)
+                            },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
 
-    const express = require('express');
-    const cors = require('cors');
-    const app = express();
-    app.use(cors());
-    app.use(express.json());
+        // ==================== INICIALIZAÇÃO ====================
+        function init() {
+            // Tailwind script já carregado
+            renderProducts();
+            createChart();
+            
+            // Aba "Produtos" ativa por padrão
+            switchTab(1);
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('stock-modal').addEventListener('click', function(e) {
+                if (e.target.id === 'stock-modal') closeModal();
+            });
+        }
 
-    // dados em memória (exemplo)
-    let products = [
-      { id:1, title:'Aderir Título', price:'R$20.000,00', image:'produto1-null.png' },
-      { id:2, title:'Aderir Título 2', price:'R$20.000,00', image:'produto2-null.png' },
-      { id:3, title:'Aderir Título 3', price:'R$20.000,00', image:'produto3-null.png' }
-    ];
-
-    let stock = { 1:12, 2:4, 3:0 };
-
-    app.get('/api/products', (req,res)=> res.json(products));
-
-    app.put('/api/products/:id', (req,res)=>{
-      const id = Number(req.params.id);
-      const p = products.find(x=>x.id===id);
-      if(!p) return res.status(404).json({error:'not found'});
-      Object.assign(p, req.body);
-      return res.json(p);
-    });
-
-    app.get('/api/stock/:id', (req,res)=>{
-      const id = Number(req.params.id);
-      res.json({ quantity: stock[id] || 0 });
-    });
-
-    app.post('/api/stock/:id', (req,res)=>{
-      const id = Number(req.params.id);
-      const q = Number(req.body.quantity)||0;
-      stock[id]=q;
-      res.json({ok:true});
-    });
-
-    app.use(express.static('public'));// servir arquivos estáticos (imagens)
-    app.listen(3000, ()=>console.log('API rodando na porta 3000'));
-
-    --- Integração com loja Instagram / marketplaces ---
-    Para sincronizar produtos com uma loja Instagram (Facebook Catalog): é necessário criar um catálogo no Meta Business,
-    obter token de acesso (Graph API) e usar endpoints para sincronizar itens (ou usar feeds CSV/JSON hospedados).
-    Posso especificar os passos e o payload necessário se desejar.
-  --></body>
+        // Inicia tudo
+        window.onload = init;
+    </script>
+</body>
 </html>
