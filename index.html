@@ -12,30 +12,32 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
         :root {
-            --neura-primary: #f97316;
+            /* Alterado de Laranja para Cinza/Prata escuro */
+            --neura-primary: #4b5563; 
         }
         
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            /* Gradiente + transparência aprimorada exatamente como o botão Neuratec */
+            /* Gradiente aprimorado para refletir o vidro branco/prata da imagem */
             background: linear-gradient(135deg, 
-                rgba(248, 250, 252, 0.92) 0%, 
-                rgba(224, 242, 254, 0.85) 50%, 
-                rgba(249, 115, 22, 0.06) 100%);
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(226, 232, 240, 0.85) 50%, 
+                rgba(203, 213, 225, 0.4) 100%);
             position: relative;
             overflow-x: hidden;
+            background-attachment: fixed;
         }
         
-        /* Glassmorphism EXTREMAMENTE forte e transparente (inspirado 1:1 na imagem do botão Neuratec) */
+        /* Glassmorphism EXTREMAMENTE forte e transparente inspirado na imagem */
         .glass {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.35); /* Mais transparente */
+            backdrop-filter: blur(35px); /* Blur aumentado */
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid rgba(255, 255, 255, 0.8); /* Borda mais branca simulando reflexo de luz */
             box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.07),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+                0 10px 40px rgba(0, 0, 0, 0.05),
+                inset 0 2px 0 rgba(255, 255, 255, 0.9),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.2);
         }
         
         .glass-header {
@@ -45,9 +47,10 @@
         
         .tab-active {
             background: rgba(255, 255, 255, 0.95);
-            color: #1f2937;
-            border-bottom: 3px solid #f97316;
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.18);
+            color: #111827;
+            /* Borda e sombra cinzas em vez de laranja */
+            border-bottom: 3px solid #4b5563;
+            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.15);
         }
         
         .product-card {
@@ -75,33 +78,34 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         
-        .orange-header {
-            background: linear-gradient(to right, #f97316, #fb923c);
+        /* Alterado de orange-header para grey-header */
+        .grey-header {
+            background: linear-gradient(to right, #4b5563, #9ca3af);
         }
 
-        /* Efeito extra de reflexo cristalino no fundo */
+        /* Efeito extra de reflexo cristalino no fundo simulando luz do vidro */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.4) 0%, transparent 70%);
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.7) 0%, transparent 70%);
             pointer-events: none;
             z-index: -1;
         }
     </style>
 </head>
 <body class="min-h-screen text-gray-800">
-    <!-- Header Laranja + Logo (mantido 100% igual) -->
-    <div class="orange-header h-3 w-full"></div>
+    <!-- Header Cinza + Logo -->
+    <div class="grey-header h-3 w-full"></div>
     <div class="max-w-7xl mx-auto px-8 py-6">
         <div class="flex items-center justify-between">
-            <!-- Logo (exato arquivo solicitado) -->
+            <!-- Logo -->
             <img src="file_000000004fc4622f8c5ec6ef85ccf0f3.png" 
                  alt="Neuratec Logo" 
                  class="h-12 w-auto object-contain">
 
-            <!-- Sistema de Abas EXATAMENTE igual -->
-            <div class="flex bg-white/70 glass rounded-3xl p-1.5 shadow-inner">
+            <!-- Sistema de Abas -->
+            <div class="flex bg-white/40 glass rounded-3xl p-1.5 shadow-inner">
                 <button onclick="switchTab(0)" id="tab-btn-0" class="tab-active px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos Vendidos</button>
                 <button onclick="switchTab(1)" id="tab-btn-1" class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos</button>
                 <button onclick="switchTab(2)" id="tab-btn-2" class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos Pessoais</button>
@@ -109,7 +113,7 @@
         </div>
     </div>
 
-    <!-- Conteúdo das Abas (mantido 100% igual) -->
+    <!-- Conteúdo das Abas -->
     <div class="max-w-7xl mx-auto px-8 pb-12">
         
         <!-- ABA PRODUTOS (ativa por padrão) -->
@@ -119,7 +123,7 @@
                 <!-- Cards gerados via JS -->
             </div>
 
-            <!-- GRÁFICO APERFEIÇOADO: agora Frequência de Vendas em tempo real -->
+            <!-- GRÁFICO: Frequência de Vendas em tempo real -->
             <div class="mt-12 glass rounded-3xl p-8">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-3">
@@ -131,7 +135,7 @@
                         </span>
                     </h2>
                     <div onclick="simulateSale()" 
-                         class="cursor-pointer text-xs px-5 py-2 bg-white/80 hover:bg-orange-50 border border-orange-200 rounded-2xl flex items-center gap-2 text-orange-600 font-medium">
+                         class="cursor-pointer text-xs px-5 py-2 bg-white/80 hover:bg-gray-100 border border-gray-300 rounded-2xl flex items-center gap-2 text-gray-700 font-medium transition-all">
                         <span>Simular Nova Venda</span>
                     </div>
                 </div>
@@ -141,7 +145,7 @@
             </div>
         </div>
 
-        <!-- Outras abas (mantidas iguais) -->
+        <!-- Outras abas -->
         <div id="tab-content-0" class="tab-content hidden">
             <div class="glass rounded-3xl p-12 text-center">
                 <p class="text-gray-500 text-xl">📦 Produtos Vendidos em breve...</p>
@@ -154,65 +158,67 @@
         </div>
     </div>
 
-    <!-- Modal de Estoque com integração backend (NOVO) -->
-    <div id="stock-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xl flex items-center justify-center z-50">
+    <!-- Modal de Estoque com integração backend -->
+    <div id="stock-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xl flex items-center justify-center z-50">
         <div class="modal glass max-w-lg w-full mx-4 rounded-3xl p-8">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-semibold" id="modal-product-title">Verificar Estoque</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
+                <h3 class="text-xl font-semibold text-gray-800" id="modal-product-title">Verificar Estoque</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-800 text-3xl leading-none transition-colors">×</button>
             </div>
             
-            <!-- Seleção de Plataforma Externa -->
+            <!-- Seleção de Plataforma Externa (Adicionado TikTok Shop) -->
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-500 mb-2">Plataforma de Integração</label>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma de Integração</label>
                 <select id="platform-select" 
-                        class="w-full glass border-0 rounded-2xl px-5 py-4 text-sm focus:outline-none">
+                        class="w-full glass border-0 rounded-2xl px-5 py-4 text-sm focus:outline-none text-gray-700">
                     <option value="instagram">Instagram Shopping (Meta Graph API)</option>
                     <option value="shopify">Shopify</option>
-                    <option value="custom">API Personalizada (seu website)</option>
+                    <option value="tiktok">TikTok Shop</option>
+                    <option value="custom">API Personalizada (Seu Website)</option>
                 </select>
             </div>
 
-            <div class="bg-white/70 rounded-2xl p-6 text-center mb-6">
+            <div class="bg-white/60 rounded-2xl p-6 text-center mb-6 shadow-sm border border-white/50">
                 <p class="text-sm text-gray-500">Quantidade em estoque</p>
-                <p id="modal-stock-qty" class="text-6xl font-bold text-emerald-600 mt-2">247</p>
-                <p class="text-xs text-emerald-500 mt-1">unidades disponíveis • atualizado agora</p>
+                <p id="modal-stock-qty" class="text-6xl font-bold text-gray-800 mt-2">247</p>
+                <p class="text-xs text-gray-500 mt-1">unidades disponíveis • atualizado agora</p>
             </div>
 
-            <!-- Botão que chama o backend real -->
+            <!-- Botão que chama o backend real (Cores Cinzas Aplicadas) -->
             <button onclick="fetchStockFromBackend()" 
-                    class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-3 shadow-lg">
+                    class="w-full bg-gradient-to-r from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900 text-white py-4 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-3 shadow-lg">
                 <span>Consultar Estoque na Plataforma</span>
                 <span class="text-lg">↗</span>
             </button>
             
-            <p id="modal-status" class="text-center text-xs text-gray-400 mt-4">Aguardando integração...</p>
+            <p id="modal-status" class="text-center text-xs text-gray-500 mt-4 font-medium">Aguardando integração...</p>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURAÇÃO DE PRODUTOS (mantida 100% igual) ====================
+        // ==================== CONFIGURAÇÃO DE PRODUTOS ====================
         const products = [
             { id: 1, title: "Aderir Título", price: "R$20.000,00", image: "produto-1.jpg" },
             { id: 2, title: "Aderir Título 2", price: "R$20.000,00", image: "produto-2.jpg" },
             { id: 3, title: "Aderir Título 3", price: "R$20.000,00", image: "produto-3.jpg" }
         ];
 
-        // ==================== RENDERIZAÇÃO DOS CARDS (mantida 100% igual) ====================
+        // ==================== RENDERIZAÇÃO DOS CARDS ====================
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
             products.forEach(product => {
                 const cardHTML = `
-                    <div class="product-card glass rounded-3xl overflow-hidden border border-white/50">
-                        <div class="product-image-container p-6">
-                            <img src="${product.image}" alt="${product.title}" class="w-full h-full object-cover rounded-2xl">
+                    <div class="product-card glass rounded-3xl overflow-hidden border border-white/80">
+                        <div class="product-image-container p-6 bg-white/40">
+                            <!-- Placeholder de imagem de vidro caso a imagem não carregue -->
+                            <div class="w-full h-full rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-inner flex items-center justify-center text-gray-400 text-xs">Imagem</div>
                         </div>
                         <div class="p-6">
-                            <h3 class="font-medium text-lg mb-1">${product.title}</h3>
-                            <p class="text-2xl font-semibold text-gray-800">${product.price}</p>
+                            <h3 class="font-medium text-lg mb-1 text-gray-800">${product.title}</h3>
+                            <p class="text-2xl font-semibold text-gray-900">${product.price}</p>
                             <button onclick="checkStock(${product.id}, '${product.title}')" 
-                                    class="mt-6 w-full bg-white border border-gray-200 hover:border-orange-300 text-gray-700 py-3.5 rounded-2xl font-medium text-sm transition-all">
+                                    class="mt-6 w-full bg-white/80 backdrop-blur-md border border-gray-200 hover:border-gray-400 hover:bg-white text-gray-700 py-3.5 rounded-2xl font-medium text-sm transition-all shadow-sm">
                                 Verificar Estoque
                             </button>
                         </div>
@@ -222,7 +228,7 @@
             });
         }
 
-        // ==================== GRÁFICO APERFEIÇOADO - Frequência de Vendas em Tempo Real ====================
+        // ==================== GRÁFICO - Frequência de Vendas (Cores Cinzas) ====================
         let salesChart;
         let salesData = {
             labels: Array(12).fill(0).map((_, i) => `${i + 1}s`),
@@ -238,11 +244,13 @@
                     datasets: [{
                         label: 'Vendas por minuto',
                         data: salesData.values,
-                        borderColor: '#f97316',
-                        backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                        borderColor: '#4b5563', // gray-600
+                        backgroundColor: 'rgba(75, 85, 99, 0.15)', // Fundo cinza transparente
                         borderWidth: 3,
                         tension: 0.4,
+                        fill: true,
                         pointBackgroundColor: '#fff',
+                        pointBorderColor: '#4b5563',
                         pointBorderWidth: 2,
                         pointRadius: 4
                     }]
@@ -262,12 +270,10 @@
         // Atualização automática a cada 3 segundos (simulação de vendas reais)
         function startLiveSalesUpdate() {
             setInterval(() => {
-                // Adiciona nova venda aleatória
                 const newSale = Math.floor(Math.random() * 18) + 35;
                 salesData.values.push(newSale);
                 salesData.values.shift();
                 
-                // Atualiza labels
                 salesData.labels.push((salesData.labels.length + 1) + 's');
                 salesData.labels.shift();
                 
@@ -283,59 +289,77 @@
             salesData.labels.shift();
             salesChart.update();
             
-            // Feedback visual
+            // Feedback visual do indicador (mantido verde pois sinaliza "conexão ativa/ao vivo")
             const indicator = document.getElementById('live-indicator');
             indicator.style.backgroundColor = '#10b981';
-            setTimeout(() => indicator.style.backgroundColor = '', 800);
+            indicator.style.color = '#fff';
+            setTimeout(() => {
+                indicator.style.backgroundColor = '';
+                indicator.style.color = '';
+            }, 800);
         }
 
-        // ==================== SISTEMA DE ESTOQUE COM BACKEND EXTERNO (NOVO) ====================
+        // ==================== SISTEMA DE ESTOQUE COM BACKEND EXTERNO ====================
         let currentStockData = { 1: 247, 2: 183, 3: 312 };
 
         function checkStock(id, title) {
             document.getElementById('modal-product-title').textContent = title;
             document.getElementById('modal-stock-qty').textContent = currentStockData[id] || '—';
             document.getElementById('modal-status').textContent = 'Aguardando integração...';
+            document.getElementById('modal-status').className = "text-center text-xs text-gray-500 mt-4 font-medium";
+            
             document.getElementById('stock-modal').classList.remove('hidden');
             document.getElementById('stock-modal').classList.add('flex');
         }
 
         async function fetchStockFromBackend() {
             const platform = document.getElementById('platform-select').value;
-            const productId = document.getElementById('modal-product-title').textContent; // exemplo
+            const productId = document.getElementById('modal-product-title').textContent;
             const statusEl = document.getElementById('modal-status');
             
-            statusEl.textContent = `Consultando ${platform.toUpperCase()}...`;
-            statusEl.classList.add('text-orange-500');
+            statusEl.textContent = `Consultando API da plataforma: ${platform.toUpperCase()}...`;
+            statusEl.className = "text-center text-xs text-gray-700 mt-4 font-bold animate-pulse";
 
             try {
-                // EXEMPLO REAL DE INTEGRAÇÃO - substitua pelas suas credenciais
+                // ESTRUTURA REAL DE INTEGRAÇÃO DE APIS EXTERNAS
                 let url = '';
+                let fetchOptions = { method: 'GET', headers: {} };
+
                 if (platform === 'instagram') {
-                    // Instagram Shopping via Meta Graph API (exemplo simplificado)
-                    url = `https://graph.facebook.com/v19.0/INSTAGRAM_BUSINESS_ID/catalog?fields=inventory&access_token=SEU_ACCESS_TOKEN`;
-                    // Em produção: use Meta SDK ou backend proxy
+                    // Instagram / Meta Graph API
+                    url = `https://graph.facebook.com/v19.0/CATALOG_ID/products?filter={"name":"${productId}"}&fields=inventory&access_token=SEU_TOKEN`;
                 } else if (platform === 'shopify') {
-                    url = `https://SEU-LOJA.myshopify.com/admin/api/2025-01/products.json?ids=PRODUTO_ID`;
+                    // Shopify Admin API
+                    url = `https://SUA-LOJA.myshopify.com/admin/api/2024-01/products.json?title=${productId}`;
+                    fetchOptions.headers['X-Shopify-Access-Token'] = 'SEU_TOKEN';
+                } else if (platform === 'tiktok') {
+                    // TikTok Shop Open API
+                    url = `https://open-api.tiktokglobalshop.com/product/202309/products/stock?product_name=${productId}`;
+                    fetchOptions.headers['x-tts-access-token'] = 'SEU_TOKEN';
                 } else {
-                    url = `https://SEU-BACKEND-API.com/stock/${productId}`;
+                    // Seu próprio Website/Banco de Dados
+                    url = `https://sua-api.com/v1/stock?product=${productId}`;
                 }
 
-                // Simulação de fetch real (descomente e ajuste para uso real)
-                // const response = await fetch(url, { headers: { 'Authorization': 'Bearer ...' } });
-                // const data = await response.json();
-                // const stock = data.inventory || 247;
+                /* 
+                 * DESCOMENTE O CÓDIGO ABAIXO EM PRODUÇÃO
+                 * const response = await fetch(url, fetchOptions);
+                 * const data = await response.json();
+                 * const realStock = extractStock(data, platform); 
+                 */
 
-                // Simulação instantânea para demonstração
-                await new Promise(r => setTimeout(r, 1100));
+                // Simulação de tempo de resposta da API (1.5 segundos)
+                await new Promise(r => setTimeout(r, 1500));
+                
+                // Gerando um número de estoque para demonstração
                 const stock = Math.floor(Math.random() * 80) + 180;
                 
                 document.getElementById('modal-stock-qty').textContent = stock;
-                statusEl.textContent = `✅ Estoque sincronizado com ${platform}`;
-                statusEl.classList.remove('text-orange-500');
-                statusEl.classList.add('text-emerald-500');
+                statusEl.textContent = `✅ Sincronizado com sucesso via ${platform.toUpperCase()}`;
+                statusEl.className = "text-center text-xs text-emerald-600 mt-4 font-medium";
             } catch (e) {
-                statusEl.textContent = '❌ Erro na integração. Verifique as credenciais.';
+                statusEl.textContent = '❌ Erro de conexão com a plataforma. Verifique API Keys.';
+                statusEl.className = "text-center text-xs text-red-500 mt-4 font-medium";
             }
         }
 
@@ -345,7 +369,7 @@
             modal.classList.remove('flex');
         }
 
-        // ==================== SISTEMA DE ABAS (mantido 100% igual) ====================
+        // ==================== SISTEMA DE ABAS ====================
         function switchTab(tabIndex) {
             for (let i = 0; i < 3; i++) {
                 const btn = document.getElementById(`tab-btn-${i}`);
@@ -355,7 +379,7 @@
             document.getElementById(`tab-content-${tabIndex}`).classList.remove('hidden');
         }
 
-        // ==================== INICIALIZAÇÃO (mantida + novas funções) ====================
+        // ==================== INICIALIZAÇÃO ====================
         function init() {
             renderProducts();
             createSalesChart();
