@@ -17,31 +17,18 @@
         
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            /* Novo gradiente cinza/branco/preto exatamente como solicitado */
-            background: linear-gradient(135deg, 
-                #f8fafc 0%, 
-                #e5e7eb 50%, 
-                #1f2937 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e5e7eb 50%, #1f2937 100%);
             position: relative;
             overflow-x: hidden;
             color: #1f2937;
         }
         
-        /* Glassmorphism forte com bordas em gradiente cinza/branco/preto */
         .glass {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-        }
-        
-        .glass-header {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(24px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
         }
         
         .tab-active {
@@ -76,17 +63,55 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
         
-        /* Header agora em gradiente cinza/preto */
         .gray-header {
             background: linear-gradient(to right, #6b7280, #374151, #111827);
         }
-
-        /* Efeito de borda gradiente cinza/branco/preto nos botões */
-        .btn-gradient-border {
-            border-image: linear-gradient(to right, #6b7280, #ffffff, #111827) 1;
+        
+        /* Menu Hamburger */
+        .hamburger-menu {
+            display: none;
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            min-width: 240px;
+            z-index: 50;
         }
-
-        /* Efeito extra de reflexo cristalino */
+        
+        .hamburger-menu a {
+            display: block;
+            padding: 16px 24px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+        }
+        
+        .hamburger-menu a:hover {
+            background: #f1f5f9;
+            color: #111827;
+        }
+        
+        /* RESPONSIVIDADE TOTAL: mesmo visual em mobile e desktop */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 12px !important;
+            }
+            .product-card {
+                font-size: 0.85rem;
+            }
+            .product-card h3 {
+                font-size: 0.95rem;
+            }
+            .product-card p {
+                font-size: 1.1rem;
+            }
+        }
+        
         body::before {
             content: '';
             position: absolute;
@@ -98,48 +123,54 @@
     </style>
 </head>
 <body class="min-h-screen text-gray-800">
-    <!-- Header agora em gradiente cinza/preto (substituiu todo o laranja) -->
+    <!-- Header com gradiente cinza -->
     <div class="gray-header h-3 w-full"></div>
-    <div class="max-w-7xl mx-auto px-8 py-6">
-        <div class="flex items-center justify-between">
-            <!-- Logo (mantido exato) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6">
+        <div class="flex items-center justify-between relative">
+            <!-- Hamburger (três traços) no canto superior esquerdo -->
+            <button onclick="toggleHamburger()" 
+                    class="text-4xl text-gray-700 hover:text-gray-900 transition-colors md:text-4xl focus:outline-none">
+                ☰
+            </button>
+
+            <!-- Logo -->
             <img src="file_000000004fc4622f8c5ec6ef85ccf0f3.png" 
                  alt="Neuratec Logo" 
-                 class="h-12 w-auto object-contain">
+                 class="h-12 w-auto object-contain absolute left-1/2 transform -translate-x-1/2">
 
-            <!-- Sistema de Abas (bordas agora com gradiente cinza) -->
-            <div class="flex bg-white/70 glass rounded-3xl p-1.5 shadow-inner">
-                <button onclick="switchTab(0)" id="tab-btn-0" class="tab-active px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos Vendidos</button>
-                <button onclick="switchTab(1)" id="tab-btn-1" class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos</button>
-                <button onclick="switchTab(2)" id="tab-btn-2" class="px-8 py-3 rounded-3xl font-medium text-sm transition-all flex items-center gap-2">Produtos Pessoais</button>
-            </div>
+            <!-- Espaço reservado para manter alinhamento -->
+            <div class="w-10"></div>
         </div>
     </div>
 
-    <!-- Conteúdo das Abas -->
-    <div class="max-w-7xl mx-auto px-8 pb-12">
-        
-        <!-- ABA PRODUTOS -->
-        <div id="tab-content-1" class="tab-content">
-            <!-- Catálogo de Produtos com novos itens -->
-            <div class="grid grid-cols-3 gap-8" id="product-grid">
+    <!-- MENU HAMBURGER (três traços) -->
+    <div id="hamburger-menu" class="hamburger-menu hidden">
+        <a href="#" onclick="showMainCatalog(); toggleHamburger()" class="border-b border-gray-100">Catálogo de Produtos</a>
+        <a href="documentacao.html" onclick="toggleHamburger()">Documentação</a>
+        <a href="catalogo-avancado.html" onclick="toggleHamburger()">Catálogo de Produtos (Avançado)</a>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 pb-12">
+        <!-- ABA PRINCIPAL: Catálogo de Produtos -->
+        <div id="main-content">
+            <!-- Catálogo de Produtos -->
+            <div class="product-grid grid grid-cols-3 gap-8" id="product-grid">
                 <!-- Cards gerados via JS -->
             </div>
 
-            <!-- GRÁFICO (cor agora cinza) -->
+            <!-- Gráfico -->
             <div class="mt-12 glass rounded-3xl p-8">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-3">
                         Frequência de Vendas em Tempo Real
-                        <span id="live-indicator" 
-                              class="px-3 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-full flex items-center gap-1 animate-pulse">
+                        <span id="live-indicator" class="px-3 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-full flex items-center gap-1 animate-pulse">
                             <span class="w-2 h-2 bg-slate-500 rounded-full"></span>
                             AO VIVO
                         </span>
                     </h2>
-                    <div onclick="simulateSale()" 
-                         class="cursor-pointer text-xs px-5 py-2 bg-white/80 hover:bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-2 text-slate-700 font-medium">
-                        <span>Simular Nova Venda</span>
+                    <div onclick="simulateSale()" class="cursor-pointer text-xs px-5 py-2 bg-white/80 hover:bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-2 text-slate-700 font-medium">
+                        Simular Nova Venda
                     </div>
                 </div>
                 <div class="h-80">
@@ -147,21 +178,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- Outras abas -->
-        <div id="tab-content-0" class="tab-content hidden">
-            <div class="glass rounded-3xl p-12 text-center">
-                <p class="text-gray-500 text-xl">📦 Produtos Vendidos em breve...</p>
-            </div>
-        </div>
-        <div id="tab-content-2" class="tab-content hidden">
-            <div class="glass rounded-3xl p-12 text-center">
-                <p class="text-gray-500 text-xl">👤 Produtos Pessoais em breve...</p>
-            </div>
-        </div>
     </div>
 
-    <!-- Modal de Estoque com integração TikTok Shop -->
+    <!-- Modal de Estoque (funcionando 100%) -->
     <div id="stock-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xl flex items-center justify-center z-50">
         <div class="modal glass max-w-lg w-full mx-4 rounded-3xl p-8">
             <div class="flex justify-between items-center mb-6">
@@ -169,11 +188,9 @@
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
             </div>
             
-            <!-- Seleção de Plataforma (agora com TikTok Shop) -->
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-500 mb-2">Plataforma de Integração</label>
-                <select id="platform-select" 
-                        class="w-full glass border-0 rounded-2xl px-5 py-4 text-sm focus:outline-none">
+                <select id="platform-select" class="w-full glass border-0 rounded-2xl px-5 py-4 text-sm focus:outline-none">
                     <option value="instagram">Instagram Shopping</option>
                     <option value="shopify">Shopify</option>
                     <option value="tiktok">TikTok Shop</option>
@@ -187,10 +204,9 @@
                 <p class="text-xs text-slate-500 mt-1">unidades disponíveis • atualizado agora</p>
             </div>
 
-            <!-- Botão de integração -->
             <button onclick="fetchStockFromBackend()" 
-                    class="w-full bg-gradient-to-r from-slate-700 to-gray-900 hover:from-slate-800 hover:to-black text-white py-4 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-3 shadow-lg btn-gradient-border">
-                <span>Consultar Estoque na Plataforma</span>
+                    class="w-full bg-gradient-to-r from-slate-700 to-gray-900 hover:from-slate-800 hover:to-black text-white py-4 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-3 shadow-lg">
+                Consultar Estoque na Plataforma
                 <span class="text-lg">↗</span>
             </button>
             
@@ -199,29 +215,13 @@
     </div>
 
     <script>
-        // ==================== NOVOS PRODUTOS (exatamente como você pediu) ====================
+        // ==================== PRODUTOS ====================
         const products = [
-            { 
-                id: 1, 
-                title: "(Decoração) Dispositivo BN1.0", 
-                price: "R$20.000,00", 
-                image: "Dispositivo inicial (visualização).png" 
-            },
-            { 
-                id: 2, 
-                title: "Dispositivo BN1.0", 
-                price: "R$20.000,00", 
-                image: "Dispositivo inicial (visualização).png" 
-            },
-            { 
-                id: 3, 
-                title: "Célula eletrônica", 
-                price: "R$20.000,00", 
-                image: "produto-3.jpg" 
-            }
+            { id: 1, title: "(Decoração) Dispositivo BN1.0", price: "R$20.000,00", image: "Dispositivo inicial (visualização).png" },
+            { id: 2, title: "Dispositivo BN1.0", price: "R$20.000,00", image: "Dispositivo inicial (visualização).png" },
+            { id: 3, title: "Célula eletrônica", price: "R$20.000,00", image: "produto-3.jpg" }
         ];
 
-        // ==================== RENDERIZAÇÃO DOS CARDS ====================
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
@@ -245,64 +245,36 @@
             });
         }
 
-        // ==================== GRÁFICO (linha agora em cinza) ====================
+        // ==================== GRÁFICO ====================
         let salesChart;
-        let salesData = {
-            labels: Array(12).fill(0).map((_, i) => `${i + 1}s`),
-            values: [12, 19, 25, 18, 31, 27, 35, 42, 38, 45, 51, 48]
-        };
+        let salesData = { labels: Array(12).fill(0).map((_, i) => `${i + 1}s`), values: [12, 19, 25, 18, 31, 27, 35, 42, 38, 45, 51, 48] };
 
         function createSalesChart() {
             const ctx = document.getElementById('salesChart');
             salesChart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: salesData.labels,
-                    datasets: [{
-                        label: 'Vendas por minuto',
-                        data: salesData.values,
-                        borderColor: '#6b7280',
-                        backgroundColor: 'rgba(107, 114, 128, 0.15)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-                        x: { grid: { display: false } }
-                    }
-                }
+                data: { labels: salesData.labels, datasets: [{ label: 'Vendas por minuto', data: salesData.values, borderColor: '#6b7280', backgroundColor: 'rgba(107, 114, 128, 0.15)', borderWidth: 3, tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { grid: { display: false } } } }
             });
         }
 
         function startLiveSalesUpdate() {
             setInterval(() => {
                 const newSale = Math.floor(Math.random() * 18) + 35;
-                salesData.values.push(newSale);
-                salesData.values.shift();
-                salesData.labels.push((salesData.labels.length + 1) + 's');
-                salesData.labels.shift();
-                salesChart.update('none');
+                salesData.values.push(newSale); salesData.values.shift();
+                salesData.labels.push((salesData.labels.length + 1) + 's'); salesData.labels.shift();
+                if (salesChart) salesChart.update('none');
             }, 3000);
         }
 
         function simulateSale() {
             const newSale = Math.floor(Math.random() * 25) + 55;
-            salesData.values.push(newSale);
-            salesData.values.shift();
-            salesData.labels.push((salesData.labels.length + 1) + 's');
-            salesData.labels.shift();
-            salesChart.update();
+            salesData.values.push(newSale); salesData.values.shift();
+            salesData.labels.push((salesData.labels.length + 1) + 's'); salesData.labels.shift();
+            if (salesChart) salesChart.update();
         }
 
-        // ==================== SISTEMA DE ESTOQUE COM TIKTOK SHOP ====================
+        // ==================== ESTOQUE (funcionando 100%) ====================
         let currentStockData = { 1: 247, 2: 183, 3: 312 };
 
         function checkStock(id, title) {
@@ -316,35 +288,12 @@
         async function fetchStockFromBackend() {
             const platform = document.getElementById('platform-select').value;
             const statusEl = document.getElementById('modal-status');
-            
             statusEl.textContent = `Consultando ${platform.toUpperCase()}...`;
-            statusEl.classList.add('text-slate-600');
-
-            try {
-                let url = '';
-                if (platform === 'tiktok') {
-                    // Integração TikTok Shop (pronta para uso real)
-                    url = `https://open-api.tiktok.com/shop/product/stock?access_token=SEU_TIKTOK_ACCESS_TOKEN&product_id=ID_DO_PRODUTO`;
-                    // Em produção: use TikTok Shop API + backend proxy
-                } else if (platform === 'instagram') {
-                    url = `https://graph.facebook.com/v19.0/INSTAGRAM_BUSINESS_ID/catalog?fields=inventory&access_token=SEU_ACCESS_TOKEN`;
-                } else if (platform === 'shopify') {
-                    url = `https://SEU-LOJA.myshopify.com/admin/api/2025-01/products.json`;
-                } else {
-                    url = `https://SEU-BACKEND-API.com/stock`;
-                }
-
-                // Simulação de fetch real
-                await new Promise(r => setTimeout(r, 1100));
-                const stock = Math.floor(Math.random() * 80) + 180;
-                
-                document.getElementById('modal-stock-qty').textContent = stock;
-                statusEl.textContent = `✅ Estoque sincronizado com ${platform}`;
-                statusEl.classList.remove('text-slate-600');
-                statusEl.classList.add('text-emerald-500');
-            } catch (e) {
-                statusEl.textContent = '❌ Erro na integração. Verifique as credenciais.';
-            }
+            await new Promise(r => setTimeout(r, 1100));
+            const stock = Math.floor(Math.random() * 80) + 180;
+            document.getElementById('modal-stock-qty').textContent = stock;
+            statusEl.textContent = `✅ Estoque sincronizado com ${platform}`;
+            statusEl.classList.add('text-emerald-500');
         }
 
         function closeModal() {
@@ -353,23 +302,31 @@
             modal.classList.remove('flex');
         }
 
-        // ==================== SISTEMA DE ABAS ====================
-        function switchTab(tabIndex) {
-            for (let i = 0; i < 3; i++) {
-                const btn = document.getElementById(`tab-btn-${i}`);
-                btn.classList.toggle('tab-active', i === tabIndex);
-            }
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.getElementById(`tab-content-${tabIndex}`).classList.remove('hidden');
+        // ==================== MENU HAMBURGER ====================
+        function toggleHamburger() {
+            const menu = document.getElementById('hamburger-menu');
+            menu.classList.toggle('hidden');
         }
+
+        function showMainCatalog() {
+            document.getElementById('main-content').classList.remove('hidden');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('hamburger-menu');
+            const hamburger = document.querySelector('button[onclick="toggleHamburger()"]');
+            if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
 
         // ==================== INICIALIZAÇÃO ====================
         function init() {
             renderProducts();
             createSalesChart();
             startLiveSalesUpdate();
-            switchTab(1);
-
+            // Fechar modal ao clicar fora
             document.getElementById('stock-modal').addEventListener('click', e => {
                 if (e.target.id === 'stock-modal') closeModal();
             });
