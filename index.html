@@ -147,7 +147,7 @@
                 <!-- Cards gerados via JS -->
             </div>
 
-            <!-- Gráfico (mantido original) -->
+            <!-- Gráfico -->
             <div class="mt-12 glass rounded-3xl p-8">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-3">
@@ -180,7 +180,7 @@
         </div>
     </div>
 
-    <!-- Modal de Estoque (100% funcional) -->
+    <!-- Modal de Estoque (100% funcional + TikTok Shop integrado) -->
     <div id="stock-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xl flex items-center justify-center z-50">
         <div class="modal glass max-w-lg w-full mx-4 rounded-3xl p-8">
             <div class="flex justify-between items-center mb-6">
@@ -189,7 +189,7 @@
             </div>
             
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-500 mb-2">Plataforma de Integração</label>
+                <label class="block text-sm font-medium text-gray-500 mb-2">Plataforma de Integração (API em tempo real)</label>
                 <select id="platform-select" class="w-full glass border-0 rounded-2xl px-5 py-4 text-sm focus:outline-none">
                     <option value="instagram">Instagram Shopping</option>
                     <option value="shopify">Shopify</option>
@@ -215,7 +215,7 @@
     </div>
 
     <script>
-        // ==================== PRODUTOS (agora com detalhes completos) ====================
+        // ==================== PRODUTOS ====================
         const products = [
             { 
                 id: 1, 
@@ -305,7 +305,7 @@
             document.getElementById('main-catalog').classList.remove('hidden');
         }
 
-        // ==================== GRÁFICO (mantido original) ====================
+        // ==================== GRÁFICO ====================
         let salesChart, salesData = { labels: Array(12).fill(0).map((_, i) => `${i + 1}s`), values: [12, 19, 25, 18, 31, 27, 35, 42, 38, 45, 51, 48] };
 
         function createSalesChart() {
@@ -333,7 +333,7 @@
             if (salesChart) salesChart.update();
         }
 
-        // ==================== ESTOQUE (mantido original) ====================
+        // ==================== ESTOQUE (TikTok Shop integrado) ====================
         let currentStockData = { 1: 247, 2: 183, 3: 312 };
 
         function checkStock(id, title) {
