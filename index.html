@@ -89,8 +89,8 @@
 
         /* === HAMBURGER MENU === */
         .hamburger-menu {
-            position: absolute;
-            top: 80px;
+            position: fixed;
+            top: 72px;
             left: 20px;
             background: rgba(255,255,255,0.97);
             backdrop-filter: blur(20px);
@@ -98,7 +98,7 @@
             border-radius: 16px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.15);
             min-width: 260px;
-            z-index: 100;
+            z-index: 9999;
             overflow: hidden;
             transform-origin: top left;
             animation: menuPop 0.2s ease-out;
@@ -198,18 +198,19 @@
             </span>
         </div>
 
-        <!-- ===== HAMBURGER MENU ===== -->
-        <div id="hamburger-menu" class="hamburger-menu hidden">
-            <button onclick="navigateTo('catalog'); toggleHamburger()" id="menu-catalog" class="menu-active">
-                📦 &nbsp;Catálogo de Produtos
-            </button>
-            <a href="documentacao.html" onclick="toggleHamburger()">
-                📄 &nbsp;Documentação
-            </a>
-            <a href="catalogo-avancado.html" onclick="toggleHamburger()">
-                🔬 &nbsp;Catálogo de Produtos (Avançado)
-            </a>
-        </div>
+    </div>
+
+    <!-- ===== HAMBURGER MENU (filho direto do body — sem stacking context pai) ===== -->
+    <div id="hamburger-menu" class="hamburger-menu hidden">
+        <button onclick="navigateTo('catalog'); toggleHamburger()" id="menu-catalog" class="menu-active">
+              &nbsp;Catálogo de Produtos
+        </button>
+        <a href="documentacao.html" onclick="toggleHamburger()">
+              &nbsp;Documentação
+        </a>
+        <a href="catalogo-avancado.html" onclick="toggleHamburger()">
+              &nbsp;Catálogo de Produtos (Avançado)
+        </a>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -322,11 +323,11 @@
             badge: "Edição Especial",
             description: "Dispositivo decorativo da linha BN, ideal para ambientes. Combina estética refinada com tecnologia.",
             features: [
-                "Conexão 5G integrada",
-                "IA Embarcada Neuratec",
-                "Design Premium exclusivo",
-                "Integração com Neuratec OS",
-                "Acabamento em alumínio anodizado"
+                "Conexão integrada",
+                "IA Embarcada",
+                "Design exclusivo",
+                "Integração com OS",
+                "Acabamento..."
             ],
             stock: 47
         },
@@ -336,7 +337,7 @@
             price: "R$ 20.000,00",
             image: "Dispositivo inicial (visualização).png",
             badge: "Mais Vendido",
-            description: "Versão padrão do BN1.0 com foco em performance e durabilidade. Projetado para automação residencial e industrial de alto desempenho.",
+            description: "Versão padrão do BN1.0 com foco em performance e durabilidade.",
             features: [
                 "Alta performance computacional",
                 "Construção robusta IP67",
